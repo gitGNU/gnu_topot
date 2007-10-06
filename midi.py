@@ -7,7 +7,8 @@ from cell import *
 
 class MidiInput(PySeq):
   def __init__(self, direct=False):
-    PySeq.__init__(self, "topot")
+    PySeq.__init__(self, "topot_midi_in")
+    self.direct = direct
     self.inport = self.createInPort('')
     self.notes = WeakValueDictionary()
     self.thread = MidiThread(self)
@@ -29,7 +30,7 @@ class MidiInput(PySeq):
     if self.go:
       return 1
     else:
-      return 2
+      return 3
 
   def note(self, id):
     if self.notes.has_key(id):
@@ -49,3 +50,21 @@ class MidiInput(PySeq):
       sendNote(data.note, data.velocity)
     elif event.type == SND_SEQ_EVENT_NOTEOFF:
       sendNote(data.note, 0)
+
+class MidiOutput(PySeq):
+  def __init__(self):
+    PySeq.__init__(self, "topot_midi_out")
+    self.createOutPort()
+    self.connected = []
+
+  def start(self, topot):
+    topot.registerOutput("note", self.note)
+
+  def note(self, id, source):
+    def sendNote():
+      event = snd_seq_event()
+      e.setNoteOn(0, id, source.value)
+      event.sendAsIs(self)
+    output = OutputCell(sendNote, source)
+    self.connected.append(output)
+    return output

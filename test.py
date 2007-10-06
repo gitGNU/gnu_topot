@@ -10,7 +10,8 @@ t = Topot()
 t.add(xkey.Keys())
 t.add(XRobot(20))
 t.add(Joystick("/dev/input/js0"), "j0_")
-t.add(MidiInput())
+#t.add(MidiInput())
+t.add(MidiOutput())
 
 def ampMove(input):
   i = input * 2.5
@@ -21,6 +22,6 @@ t.connect("click", 2, t.get("j0_button", 1))
 t.connect("click", 3, t.get("j0_button", 2))
 t.connect("mousemove", pair(transform(t.get("j0_axis", 0), ampMove),
                             transform(t.get("j0_axis", 1), ampMove)))
-t.connect("key", 38, t.get("note", 48))
+t.connect("note", 48, t.get("j0_button", 3))
 
 t.start()
