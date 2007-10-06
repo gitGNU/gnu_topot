@@ -4,30 +4,36 @@ from threading import Thread
 import time
 
 class XRobot(Thread):
-  move_display = None
-  
-  def __init__(self, motion, frequency = 20):
+  def __init__(self, frequency = 20):
     Thread.__init__(self)
     self.setDaemon(True)
-    if motion:
-      self.motion = motion
-      self.delay = 1.0 / frequency
-      self.move_display = robot.openDisplay()
-      self.start()
     self.display = robot.openDisplay()
+    self.move_display = robot.openDisplay()
+    self.motion = None
+    self.delay = 1.0 / frequency
     self.connected = []
 
   def __del__(self):
-    if self.move_display:
-      robot.closeDisplay(self.move_display)
+    robot.closeDisplay(self.move_display)
     robot.closeDisplay(self.display)
+
+  def start(self, topot):
+    self.topot = topot
+    topot.registerOutput("key", self.connectKey)
+    topot.registerOutput("click", self.connectButton)
+    topot.registerOutput("mousemove", self.connectMotion)
+    Thread.start(self)
 
   def run(self):
     while True:
-      dx, dy = self.motion.value
+      dx, dy = (self.motion and self.motion.value) or (0, 0)
       if dx or dy:
         robot.moveMouse(self.move_display, int(dx), int(dy))
       time.sleep(self.delay)
+
+  def connectMotion(self, input):
+    self.motion = input
+    return input
 
   def connectButton(self, input, button):
     def sendButton():

@@ -5,18 +5,22 @@ from threading import Thread
 class Joystick(Thread):
   go = True
   
-  def __init__(self, device, queue):
+  def __init__(self, device):
     Thread.__init__(self)
     self.setDaemon(True)
     self.reader = readjoy.Joystick(device)
-    self.queue = queue
     self.button = [InputCell(False) for x in range(self.reader.nButtons())]
     self.axis = [InputCell(0) for x in range(self.reader.nAxis())]
-    self.start()
+
+  def start(self, topot):
+    self.topot = topot
+    topot.registerInput("button", lambda b: self.button[b])
+    topot.registerInput("axis", lambda a: self.axis[a])
+    Thread.start(self)
 
   def run(self):
     while self.go:
-      self.queue.send(self, self.reader.getEvent())
+      self.topot.enqueue(self.signal, self.reader.getEvent())
 
   def signal(self, event):
     type, number, value = event

@@ -18,16 +18,22 @@ class KeyCell(InputCell):
 class Keys(Thread):
   handlers = None
 
-  def __init__(self, queue):
+  def __init__(self):
     Thread.__init__(self)
     self.setDaemon(True)
     self.handlers = {}
-    self.queue = queue
-    self.start()
 
+  def __del__(self):
+    self.reset()
+
+  def start(self, topot):
+    self.topot = topot
+    topot.registerInput("key", self.cell)
+    Thread.start(self)
+    
   def run(self):
     while True:
-      self.queue.send(self, grabkey.getEvent())
+      self.topot.enqueue(self.signal, grabkey.getEvent())
 
   def signal(self, event):
     type, keycode, modifiers, value = event
@@ -36,7 +42,7 @@ class Keys(Thread):
     if self.handlers.has_key((keycode, Any)):
       self.handlers[(keycode, Any)].value = value
 
-  def key(self, keycode, modifiers = Any):
+  def cell(self, keycode, modifiers = Any):
     name = (keycode, modifiers)
       
     if self.handlers.has_key(name):
