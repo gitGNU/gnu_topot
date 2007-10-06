@@ -1,0 +1,20 @@
+Topot is python scripting environment to allow classic input devices,
+gamepads/joysticks and midi/osc gears to mimic each other (to use
+mouse/keyboard as midi/osc controlers and vice versa...)
+
+Visualisations of the parameters in charge is an extra layer.
+
+It allows user to use gamepad as mouse, keyboard or any other system
+call written in xAction class. At the moment, there is also draft class
+which allows user to use MIDI controller as a regular mouse.
+
+Requirments:
+ * http://freshmeat.net/projects/pyjsw/
+ * http://www.sci.ccny.cuny.edu/~brinkman/software/pyseq/
+
+You should have topot python files (+ requirments) in your PYTHONPATH
+environment variable.
+
+Plan: to use http://slut.sourceforge.net/ extensively for visual layer.
+
+Marcell Mars (ki.ber@kom.uni.st)
