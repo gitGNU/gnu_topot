@@ -6,14 +6,15 @@ from cell import *
 # Completely untested.
 
 class MidiInput(PySeq):
-  def __init__(queue, direct=False):
-    PySeq.__init__(self)
-    self.queue = queue
+  def __init__(self, direct=False):
+    PySeq.__init__(self, "topot")
+    self.inport = self.createInPort('')
     self.notes = WeakValueDictionary()
     self.thread = MidiThread(self)
-    self.start()
 
-  def start():
+  def start(self, topot):
+    self.topot = topot
+    topot.registerInput("note", self.note)
     self.go = True
     self.thread.start()
 
@@ -24,7 +25,7 @@ class MidiInput(PySeq):
     if (self.direct):
       self.signal(event)
     else:
-      self.queue.send(self, event)
+      self.topot.enqueue(self.signal, event)
     if self.go:
       return 1
     else:
@@ -34,7 +35,7 @@ class MidiInput(PySeq):
     if self.notes.has_key(id):
       return self.notes[id]
     else:
-      note = InputCell(0, True)
+      note = InputCell(0)
       self.notes[id] = note
       return note
 
