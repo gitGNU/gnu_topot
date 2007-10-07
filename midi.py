@@ -58,11 +58,11 @@ class MidiOutput(PySeq):
     topot.registerOutput("controller", self.controller)
 
   def controller(self, source, channel, control):
-    return OutputCell(self.sendEvent(lambda e: e.setController(channel, control, source.value)),
+    return OutputCell(self.sendEvent(lambda e: e.setController(channel, control, int(source.value))),
                       source)
 
   def note(self, source, id):
-    return OutputCell(self.sendEvent(lambda e: e.setNoteOn(id, source.value), source))
+    return OutputCell(self.sendEvent(lambda e: e.setNoteOn(id, int(source.value))), source)
 
   def sendEvent(self, modify):
     def sendNote():
