@@ -2,6 +2,7 @@ from pyseq import *
 from weakref import WeakValueDictionary
 from cell import *
 
+
 class MidiInput(PySeq):
   def __init__(self, direct=False):
     PySeq.__init__(self, "topot_midi_in")
