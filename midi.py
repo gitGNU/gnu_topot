@@ -51,17 +51,24 @@ class MidiInput(PySeq):
 class MidiOutput(PySeq):
   def __init__(self):
     PySeq.__init__(self, "topot_midi_out")
-    self.createOutPort()
-    self.connected = []
+    self.out = self.createOutPort()
 
   def start(self, topot):
     topot.registerOutput("note", self.note)
+    topot.registerOutput("controller", self.controller)
+
+  def controller(self, source, channel, control):
+    return OutputCell(self.sendEvent(lambda e: e.setController(channel, control, source.value)),
+                      source)
 
   def note(self, source, id):
+    return OutputCell(self.sendEvent(lambda e: e.setNoteOn(id, source.value), source))
+
+  def sendEvent(self, modify):
     def sendNote():
       event = snd_seq_event()
-      e.setNoteOn(0, id, source.value)
-      event.sendAsIs(self)
-    output = OutputCell(sendNote, source)
-    self.connected.append(output)
-    return output
+      modify(event)
+      event.setSource(0)
+      event.setSubscribers()
+      event.sendNow(self, self.out)
+    return sendNote
