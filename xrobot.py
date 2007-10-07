@@ -11,7 +11,6 @@ class XRobot(Thread):
     self.move_display = robot.openDisplay()
     self.motion = None
     self.delay = 1.0 / frequency
-    self.connected = []
 
   def __del__(self):
     robot.closeDisplay(self.move_display)
@@ -38,16 +37,12 @@ class XRobot(Thread):
   def connectButton(self, input, button):
     def sendButton():
       robot.sendButtonEvent(self.display, button, int(input.value))
-    cell = OutputCell(sendButton, input)
-    self.connected.append(cell)
-    return cell
+    return OutputCell(sendButton, input)
       
   def connectKey(self, input, keycode, modifiers = 0):
     def sendKey():
       robot.sendKeyEvent(self.display, keycode, modifiers, int(input.value))
-    cell = OutputCell(sendKey, input)
-    self.connected.append(cell)
-    return cell
+    return OutputCell(sendKey, input)
 
   def disconnect(self, cell):
     self.connected.remove(cell)

@@ -9,3 +9,11 @@ def pair(a, b):
 
 def transform(cell, f):
   return Cell(lambda: f(cell.value), cell)
+
+def sticky(cell):
+  state = [False]
+  def flip():
+    if cell.value:
+      state[0] = not state[0]
+    return state[0]
+  return Cell(flip, cell)

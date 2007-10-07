@@ -31,8 +31,13 @@ class OutputCell(object):
     self.action()
 
 class Cell(InputCell, OutputCell):
+  initialized = False
+  
   def __init__(self, compute, *sources):
+    # hackity-hack-hack
+    compute.cell = self
     def recompute():
       self.value = compute()
     OutputCell.__init__(self, recompute, *sources)
     InputCell.__init__(self, compute())
+    self.initialized = True
