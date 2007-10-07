@@ -1,5 +1,4 @@
 from pyseq import *
-from mqueue import MQueue
 from weakref import WeakValueDictionary
 from cell import *
 
