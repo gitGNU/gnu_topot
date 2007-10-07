@@ -2,8 +2,6 @@ from pyseq import *
 from weakref import WeakValueDictionary
 from cell import *
 
-# Completely untested.
-
 class MidiInput(PySeq):
   def __init__(self, direct=False):
     PySeq.__init__(self, "topot_midi_in")
@@ -59,7 +57,7 @@ class MidiOutput(PySeq):
   def start(self, topot):
     topot.registerOutput("note", self.note)
 
-  def note(self, id, source):
+  def note(self, source, id):
     def sendNote():
       event = snd_seq_event()
       e.setNoteOn(0, id, source.value)
