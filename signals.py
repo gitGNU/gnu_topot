@@ -1,6 +1,8 @@
 from weakref import ref
 
-class InputCell(object):
+# Cheapo alternative to the Trellis library. With the marked difference that signals do not
+
+class InputSignal(object):
   def __init__(self, init):
     self._value = init
     self._clients = []
@@ -20,7 +22,7 @@ class InputCell(object):
   def _register(self, client):
     self._clients.append(ref(client, lambda r: self._clients.remove(r)))
 
-class OutputCell(object):
+class OutputSignal(object):
   def __init__(self, action, *sources):
     self._sources = sources
     for source in sources:
@@ -30,14 +32,14 @@ class OutputCell(object):
   def _update(self):
     self.action()
 
-class Cell(InputCell, OutputCell):
+class Signal(InputSignal, OutputSignal):
   initialized = False
   
   def __init__(self, compute, *sources):
     # hackity-hack-hack
-    compute.cell = self
+    compute.signal = self
     def recompute():
       self.value = compute()
-    OutputCell.__init__(self, recompute, *sources)
-    InputCell.__init__(self, compute())
+    OutputSignal.__init__(self, recompute, *sources)
+    InputSignal.__init__(self, compute())
     self.initialized = True
