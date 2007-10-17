@@ -20,7 +20,6 @@ class Printer:
 t.add(Printer())
 
 t.connect("print", "escape:", t.get("key", 9))
-t.connect("print", "escape:", t.get("key", 9))
 t.connect("mod", "special", sticky(t.get("key", 66)))
 t.withModifiers(on=["special"])
 t.connect("print", "special-a:", t.get("key", 38))
