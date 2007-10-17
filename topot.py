@@ -51,6 +51,11 @@
 from selectloop import SelectLoop
 from signals import *
 
+def nameSignal(signal, id, args):
+  signal.name = id + " " + " ".join([repr(x) for x in args])
+  return signal
+
+
 class Topot (SelectLoop):
   selectedModifiers = None
 
@@ -99,10 +104,11 @@ class Topot (SelectLoop):
     input = args[-1]
     result = self.outputSignals[outputid](input, *specs)
     self.connected.append(result)
-    return result
+    return nameSignal(result, outputid, specs)
 
   def get(self, id, *specs):
     input = self.inputSignals[id](*specs)
+    result = None
     if (self.selectedModifiers):
       checker = self.selectedModifiers
       def checkModifier(prevValue, initialized):
@@ -110,6 +116,7 @@ class Topot (SelectLoop):
           return input.value
         else:
           return prevValue
-      return Signal(checkModifier, input, self.modifier)
+      result = Signal(checkModifier, input, self.modifier)
     else:
-      return input
+      result = input
+    return nameSignal(result, id, specs)

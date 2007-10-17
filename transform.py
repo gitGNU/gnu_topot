@@ -17,4 +17,3 @@ def sticky(signal):
       state[0] = not state[0]
     return state[0]
   return Signal(flip, signal)
-

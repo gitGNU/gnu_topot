@@ -12,11 +12,17 @@
 from weakref import ref
 from inspect import getargspec
 
+class BaseSignal(object):
+  name = None
+
+  def __repr__(self):
+    return "<Signal " + (self.name or "?") + ">"
+
 
 # Use this class for signals at the start of the chain. These are not
 # dependant on other signals, and get their value by direct
 # assignment to their value property.
-class InputSignal(object):
+class InputSignal(BaseSignal):
   def __init__(self, init):
     self._value = init
     self._clients = []
@@ -40,7 +46,7 @@ class InputSignal(object):
 # Use this class for signals at the end of the chain. No signals can
 # depend on these, and they affect the outside world (though their
 # action function) rather than computing a value.
-class OutputSignal(object):
+class OutputSignal(BaseSignal):
   def __init__(self, action, *sources):
     self._sources = sources
     for source in sources:
