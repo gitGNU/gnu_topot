@@ -1,51 +1,22 @@
-from threading import Thread
-from Queue import Queue
-from cell import *
+from selectloop import SelectLoop
+from signals import *
 
-class Topot:
-  thread = None
-  go = True
+class Topot (SelectLoop):
   selectedModifiers = None
 
-  def __init__(self, useThread = True):
-    self.queue = Queue(0)
+  def __init__(self):
+    SelectLoop.__init__(self)
     self.inputSignals = {}
     self.outputSignals = {"mod": self.activateModifier}
     self.connected = []
     self.components = []
-    self.modifier = InputCell(set([None]))
+    self.modifier = InputSignal(set([None]))
     
-    if useThread:
-      self.thread = Thread()
-      self.thread.setDaemon(True)
-      self.thread.run = self.run
-
-  def start(self):
-    self.go = True
-    if self.thread:
-      self.thread.start()
-    else:
-      self.run()
-
-  def stop(self):
-    self.go = False
-
-  def run(self):
-    while self.go:
-      self.queue.get(True)()
-
-  def enqueue(self, thunk, *args):
-    def delayed():
-      return thunk(*args)
-    if len(args) > 0:
-      self.queue.put(delayed)
-    else:
-      self.queue.put(thunk)
-
   def add(self, component, prefix = ""):
     self.prefix = prefix
     self.components.append(component)
-    component.start(self)
+    gen = component.start(self)
+    if gen: self.register(gen)
     self.prefix = ""
 
   # Used by signal-connecting code
@@ -71,7 +42,7 @@ class Topot:
         self.modifier.value = self.modifier.value | modifier
       else:
         self.modifier.value = self.modifier.value - modifier
-    return OutputCell(setModifier, input)
+    return OutputSignal(setModifier, input)
 
   def connect(self, outputid, *args):
     specs = args[:-1]
@@ -84,11 +55,11 @@ class Topot:
     input = self.inputSignals[id](*specs)
     if (self.selectedModifiers):
       checker = self.selectedModifiers
-      def checkModifier():
-        if (not checkModifier.cell.initialized) or checker(self.modifier.value):
+      def checkModifier(prevValue, initialized):
+        if (not initialized) or checker(self.modifier.value):
           return input.value
         else:
-          return checkModifier.cell.value
-      return Cell(checkModifier, input, self.modifier)
+          return prevValue
+      return Signal(checkModifier, input, self.modifier)
     else:
       return input

@@ -48,3 +48,6 @@ int Joystick::nAxis() {
 int Joystick::nButtons() {
   return buttons;
 }
+int Joystick::fileno() {
+  return fd;
+}

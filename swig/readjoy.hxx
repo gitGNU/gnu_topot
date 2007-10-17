@@ -6,6 +6,8 @@ public:
   PyObject* getEvent();
   int nAxis();
   int nButtons();
+  int fileno();
+  
 private:
   int fd;
   char axis, buttons;

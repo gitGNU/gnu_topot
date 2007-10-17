@@ -13,6 +13,10 @@ Display* openDisplay() {
   return display;
 }
 
+int displayFD(Display* display) {
+  return ConnectionNumber(display);
+}
+
 void closeDisplay(Display* display) {
   if (!XCloseDisplay(display))
     PyErr_SetString(PyExc_IOError, "Could not close X display.");

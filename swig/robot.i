@@ -8,6 +8,7 @@
 %inline %{
 Display* openDisplay();
 void closeDisplay(Display* display);
+int displayFD(Display* display);
 
 PyObject* mousePos(Display* display);
 void moveMouse(Display* display, int dx, int dy);

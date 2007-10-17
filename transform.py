@@ -1,19 +1,20 @@
-from cell import *
+from signals import *
 from threading import Thread
 
-def amplify(cell, factor):
-  return Cell(lambda: cell.value * factor, cell)
+def amplify(signal, factor):
+  return Signal(lambda: signal.value * factor, signal)
 
 def pair(a, b):
-  return Cell(lambda: (a.value, b.value), a, b)
+  return Signal(lambda: (a.value, b.value), a, b)
 
-def transform(cell, f):
-  return Cell(lambda: f(cell.value), cell)
+def transform(signal, f):
+  return Signal(lambda: f(signal.value), signal)
 
-def sticky(cell):
+def sticky(signal):
   state = [False]
   def flip():
-    if cell.value:
+    if signal.value:
       state[0] = not state[0]
     return state[0]
-  return Cell(flip, cell)
+  return Signal(flip, signal)
+

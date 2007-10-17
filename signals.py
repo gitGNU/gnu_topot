@@ -1,4 +1,5 @@
 from weakref import ref
+from inspect import getargspec
 
 # Cheapo alternative to the Trellis library. With the marked difference that signals do not
 
@@ -34,12 +35,18 @@ class OutputSignal(object):
 
 class Signal(InputSignal, OutputSignal):
   initialized = False
+  _value = None
   
   def __init__(self, compute, *sources):
-    # hackity-hack-hack
-    compute.signal = self
+    expected, var, varkw, defs = getargspec(compute)
+    if len(expected) == 0:
+      compute_ = compute
+    elif len(expected) == 1:
+      compute_ = lambda: compute(self.value)
+    else:
+      compute_ = lambda: compute(self.value, self.initialized)
     def recompute():
-      self.value = compute()
+      self.value = compute_()
     OutputSignal.__init__(self, recompute, *sources)
-    InputSignal.__init__(self, compute())
+    InputSignal.__init__(self, compute_())
     self.initialized = True

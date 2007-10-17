@@ -1,40 +1,31 @@
 from pyseq import *
 from weakref import WeakValueDictionary
-from cell import *
+from signals import *
 
+# Warning: socket-select revision is untested, quite probably wrong
 
 class MidiInput(PySeq):
-  def __init__(self, direct=False):
+  def __init__(self):
     PySeq.__init__(self, "topot_midi_in")
-    self.direct = direct
     self.inport = self.createInPort('')
     self.notes = WeakValueDictionary()
-    self.thread = MidiThread(self)
 
   def start(self, topot):
-    self.topot = topot
     topot.registerInput("note", self.note)
-    self.go = True
-    self.thread.start()
+    return self.run()
 
-  def stop():
-    self.go = False
-
-  def callback(self, event):
-    if (self.direct):
+  def run(self):
+    while True:
+      yield ("in", self.inport)
+      event = snd_seq_event()
+      event.read(self)
       self.signal(event)
-    else:
-      self.topot.enqueue(self.signal, event)
-    if self.go:
-      return 1
-    else:
-      return 3
-
+      
   def note(self, id):
     if self.notes.has_key(id):
       return self.notes[id]
     else:
-      note = InputCell(0)
+      note = InputSignal(0)
       self.notes[id] = note
       return note
 
@@ -60,11 +51,11 @@ class MidiOutput(PySeq):
 
   def controller(self, source, control, channel=0):
     setController = lambda e: e.setController(channel, control, int(source.value))
-    return OutputCell(self.sendEvent(setController), source)
+    return OutputSignal(self.sendEvent(setController), source)
 
   def note(self, source, id, channel=0):
     setNote = lambda e: e.setNoteOn(channel, id, int(source.value))
-    return OutputCell(self.sendEvent(setNote), source)
+    return OutputSignal(self.sendEvent(setNote), source)
 
   def sendEvent(self, modify):
     def sendNote():

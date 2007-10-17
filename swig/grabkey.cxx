@@ -11,67 +11,34 @@
  * Python process or polling for events.
  */
 
-Display* display = NULL;
-#define ROOT() (RootWindow(display, DefaultScreen(display)))
-#define OPEN() if (display == NULL) open()
+#define ROOT(display) (RootWindow(display, DefaultScreen(display)))
 
-bool open() {
-  if (display != NULL)
-    return True;
-  
-  display = XOpenDisplay(0);
-  if (display) {
-    XSelectInput(display, ROOT(), KeyPressMask | KeyReleaseMask);
-    return True;
-  }
-  else {
-    return False;
-  }
-}
-
-bool close() {
-  if (display == NULL)
-    return True;
-
-  bool result = XCloseDisplay(display);
-  display = NULL;
-  return result;
-}
-
-bool isOpen() {
-  return display != NULL;
-}
-
-PyObject* getEvent() {
-  OPEN();
+PyObject* getEvent(Display* display) {
   XEvent event;
   Py_BEGIN_ALLOW_THREADS;
-  XWindowEvent(display, ROOT(), KeyPressMask|KeyReleaseMask, &event);
+  XWindowEvent(display, ROOT(display), KeyPressMask|KeyReleaseMask, &event);
   Py_END_ALLOW_THREADS;
   return Py_BuildValue("(siii)", "key", event.xkey.keycode,
                        event.xkey.state, event.type == KeyPress);
 }
 
-PyObject* checkEvent() {
-  OPEN();
+PyObject* checkEvent(Display* display) {
   XEvent event;
-  if (XCheckWindowEvent(display, ROOT(), KeyPressMask|KeyReleaseMask, &event))
+  if (XCheckWindowEvent(display, ROOT(display), KeyPressMask|KeyReleaseMask, &event))
     return Py_BuildValue("(siii)", "key", event.xkey.keycode,
                          event.xkey.state, event.type == KeyPress);
   else
     return Py_None;
 }
 
-int grabKey(int keycode, unsigned int modifiers, bool pass) {
-  OPEN();
-  int val = XGrabKey(display, keycode, modifiers, ROOT(), pass, GrabModeSync, GrabModeAsync);
+int grabKey(Display* display, int keycode, unsigned int modifiers, bool pass) {
+  int val = XGrabKey(display, keycode, modifiers, ROOT(display), pass, GrabModeSync, GrabModeAsync);
   XFlush(display);
   return val;
 }
 
-int ungrabKey(int keycode, unsigned int modifiers) {
-  OPEN();
-  int val = XUngrabKey(display, keycode, modifiers, ROOT());
+int ungrabKey(Display* display, int keycode, unsigned int modifiers) {
+  int val = XUngrabKey(display, keycode, modifiers, ROOT(display));
   XFlush(display);
   return val;
 }

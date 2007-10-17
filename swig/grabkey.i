@@ -1,5 +1,10 @@
 %module grabkey
 
+%{
+#include <X11/Xlibint.h>
+#undef _POSIX_C_SOURCE
+%}
+
 #define ShiftMask		(1<<0)
 #define LockMask		(1<<1)
 #define ControlMask		(1<<2)
@@ -11,13 +16,9 @@
 #define AnyModifier		(1<<15)
 
 %inline %{
-bool open();
-bool close();
-bool isOpen();
+PyObject* getEvent(Display* display);
+PyObject* checkEvent(Display* display);
 
-PyObject* getEvent();
-PyObject* checkEvent();
-
-int grabKey(int keycode, unsigned int modifiers, bool pass);
-int ungrabKey(int keycode, unsigned int modifiers);
+int grabKey(Display* display, int keycode, unsigned int modifiers, bool pass);
+int ungrabKey(Display* display, int keycode, unsigned int modifiers);
 %}

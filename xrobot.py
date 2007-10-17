@@ -1,5 +1,5 @@
 from swig import robot
-from cell import *
+from signals import *
 from threading import Thread
 import time
 
@@ -8,12 +8,13 @@ class XRobot(Thread):
     Thread.__init__(self)
     self.setDaemon(True)
     self.display = robot.openDisplay()
-    self.move_display = robot.openDisplay()
+    self.move_display = None
     self.motion = None
     self.delay = 1.0 / frequency
 
   def __del__(self):
-    robot.closeDisplay(self.move_display)
+    if self.move_display:
+      robot.closeDisplay(self.move_display)
     robot.closeDisplay(self.display)
 
   def start(self, topot):
@@ -24,6 +25,7 @@ class XRobot(Thread):
     Thread.start(self)
 
   def run(self):
+    self.move_display = robot.openDisplay()
     while True:
       dx, dy = (self.motion and self.motion.value) or (0, 0)
       if dx or dy:
@@ -37,12 +39,12 @@ class XRobot(Thread):
   def connectButton(self, input, button):
     def sendButton():
       robot.sendButtonEvent(self.display, button, int(input.value))
-    return OutputCell(sendButton, input)
+    return OutputSignal(sendButton, input)
       
   def connectKey(self, input, keycode, modifiers = 0):
     def sendKey():
       robot.sendKeyEvent(self.display, keycode, modifiers, int(input.value))
-    return OutputCell(sendKey, input)
+    return OutputSignal(sendKey, input)
 
-  def disconnect(self, cell):
-    self.connected.remove(cell)
+  def disconnect(self, signal):
+    self.connected.remove(signal)
