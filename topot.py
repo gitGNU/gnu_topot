@@ -111,12 +111,12 @@ class Topot (SelectLoop):
     result = None
     if (self.selectedModifiers):
       checker = self.selectedModifiers
-      def checkModifier(prevValue, initialized):
-        if (not initialized) or checker(self.modifier.value):
+      def checkModifier(prevValue):
+        if checker(self.modifier.value):
           return input.value
         else:
           return prevValue
-      result = Signal(checkModifier, input, self.modifier)
+      result = Signal(checkModifier, input, self.modifier, init=input.value)
     else:
       result = input
     return nameSignal(result, id, specs)

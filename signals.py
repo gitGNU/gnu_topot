@@ -59,24 +59,17 @@ class OutputSignal(BaseSignal):
 
 # Regular signal class. The constructor expects a function that
 # recomputes the signal's value and any number of dependencies as
-# arguments. This function can take 0, 1, or 2 arguments. If it takes
-# at least one, its first argument will be the previous value of the
-# signal. If it takes two, its second argument is a boolean indicating
-# whether the signal has been initialized yet.
+# arguments. This function can take 0 or 1. If it takes one, its first
+# argument will be the previous value of the signal.
 class Signal(InputSignal, OutputSignal):
-  _value = None
-  
-  def __init__(self, compute, *sources):
+  def __init__(self, compute, *sources, **init):
+    self._value = init.get("init", None)
     expected, var, varkw, defs = getargspec(compute)
-    initialized = False
     if len(expected) == 0:
       compute_ = compute
     elif len(expected) == 1:
       compute_ = lambda: compute(self.value)
-    else:
-      compute_ = lambda: compute(self.value, initialized)
     def recompute():
       self.value = compute_()
     OutputSignal.__init__(self, recompute, *sources)
     InputSignal.__init__(self, compute_())
-    initialized = True
