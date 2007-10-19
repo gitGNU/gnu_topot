@@ -1,25 +1,39 @@
+from threading import Thread
 from pyseq import *
 from weakref import WeakValueDictionary
 from signals import *
+from Queue import Queue
+import os
 
-# Warning: socket-select revision is untested, quite probably wrong
+# Uses a thread that fetches midi events, a queue to store these
+# events, and a pipe for the main thread to select on. When an event
+# is found, a single character is sent to the pipe, which causes the
+# thing to unblock, so that the run method can read that character,
+# fetch the event from the queue, and dispatch it.
 
 class MidiInput(PySeq):
   def __init__(self):
     PySeq.__init__(self, "topot_midi_in")
     self.inport = self.createInPort('')
     self.notes = WeakValueDictionary()
+    self.queue = Queue()
+    self.pin, self.pout = os.pipe()
+    self.thread = MidiThread(self)
 
   def start(self, topot):
     topot.registerInput("note", self.note)
+    self.thread.start()
     return self.run()
+
+  def callback(self, event):
+    self.queue.put(event)
+    os.write(self.pout, "!")
 
   def run(self):
     while True:
-      yield ("in", self.inport)
-      event = snd_seq_event()
-      event.read(self)
-      self.signal(event)
+      yield ("in", self.pin)
+      os.read(self.pin, 1)
+      self.signal(self.queue.get(True))
       
   def note(self, id):
     if self.notes.has_key(id):

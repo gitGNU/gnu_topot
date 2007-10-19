@@ -18,7 +18,6 @@ class XRobot(Thread):
     robot.closeDisplay(self.display)
 
   def start(self, topot):
-    self.topot = topot
     topot.registerOutput("key", self.connectKey)
     topot.registerOutput("click", self.connectButton)
     topot.registerOutput("mousemove", self.connectMotion)
