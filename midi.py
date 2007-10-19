@@ -28,6 +28,7 @@ class MidiInput(PySeq):
   def callback(self, event):
     self.queue.put(event)
     os.write(self.pout, "!")
+    return 1
 
   def run(self):
     while True:
