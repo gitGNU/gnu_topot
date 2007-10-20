@@ -1,19 +1,12 @@
 from swig import grabkey
 from swig import robot # for X display handling
 from signals import *
+from weakref import ref
 
 Shift = grabkey.ShiftMask
 Control = grabkey.ControlMask
 Alt = grabkey.Mod1Mask
 Any = grabkey.AnyModifier
-
-class KeySignal(InputSignal):
-  def __init__(self, reset):
-    InputSignal.__init__(self, 0)
-    self.reset = reset
-
-  def __del__(self):
-    self.reset()
 
 class Keys:
   handlers = None
@@ -42,27 +35,26 @@ class Keys:
   def signal(self, event):
     type, keycode, modifiers, value = event
     if self.handlers.has_key((keycode, modifiers)):
-      self.handlers[(keycode, modifiers)].value = value
+      self.handlers[(keycode, modifiers)]().value = value
     if self.handlers.has_key((keycode, Any)):
-      self.handlers[(keycode, Any)].value = value
+      self.handlers[(keycode, Any)]().value = value
 
   def key(self, keycode, modifiers = Any):
     name = (keycode, modifiers)
       
     if self.handlers.has_key(name):
-      return self.handlers[name]
+      return self.handlers[name]()
     else:
-      handler = KeySignal(lambda: self.reset(keycode, modifiers))
-      self.handlers[name] = handler
+      handler = InputSignal(0)
       grabkey.grabKey(self.display, keycode, modifiers, False)
+      self.handlers[name] = ref(handler, lambda x: self.reset(keycode, modifiers))
       return handler
-
+      
   def reset(self, keycode = None, modifiers = Any):
     if keycode is None:
       while len(self.handlers):
         key, handler = self.handlers.popitem()
-        handler.reset()
-        handler.reset = lambda: None
+        self.reset(key[0], key[1])
     else:
       grabkey.ungrabKey(self.display, keycode, modifiers)
       if self.handlers.has_key((keycode, modifiers)):
