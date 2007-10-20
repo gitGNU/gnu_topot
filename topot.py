@@ -106,6 +106,10 @@ class Topot (SelectLoop):
     self.connected.append(result)
     return nameSignal(result, outputid, specs)
 
+  def disconnect(self, output):
+    output.deactivate()
+    self.connected.remove(output)
+
   def get(self, id, *specs):
     input = self.inputSignals[id](*specs)
     result = None

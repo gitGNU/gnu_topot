@@ -47,14 +47,24 @@ class InputSignal(BaseSignal):
 # depend on these, and they affect the outside world (though their
 # action function) rather than computing a value.
 class OutputSignal(BaseSignal):
+  _active = True
+  
   def __init__(self, action, *sources):
     self._sources = sources
     for source in sources:
       source._register(self)
     self.action = action
 
+  def deactivate(self):
+    self._active = False
+
+  def activate(self):
+    self._active = True
+    self._update()
+
   def _update(self):
-    self.action()
+    if self._active:
+      self.action()
 
 
 # Regular signal class. The constructor expects a function that
