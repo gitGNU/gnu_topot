@@ -1,1 +1,2 @@
 * check if the logic of not firing up events if value didn't change is good or not
+* standardize input/source in InputSignals (xrobot.py and the rest)
