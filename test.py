@@ -4,6 +4,7 @@ from xrobot import *
 from transform import *
 from topot import Topot
 from midi import MidiInput, MidiOutput
+from osc import OscOutput 
 
 t = Topot()
 
@@ -20,6 +21,7 @@ class Printer:
 t.add(Printer())
 t.add(MidiInput())
 t.add(MidiOutput())
+t.add(OscOutput())
 
 t.connect("pgmchange", 39, t.get("key", 9))
 t.connect("print", "Print Controller: ", t.get("controller", 27))
@@ -27,6 +29,8 @@ t.connect("print", "Print PgmChange2: ", t.get("pgmchange", 2))
 t.connect("print", "Print PgmChange3: ", t.get("pgmchange", 3))
 t.connect("print", "Print PgmChange4: ", t.get("pgmchange", 4))
 t.connect("print", "Print note: ", t.get("note", 49))
+t.connect("print", "key escape: ", t.get("key", 9))
+t.connect("osc", "/sl/0/hit", ("record",), "127.0.0.1", 9951, t.get("key", 9)) 
 
 """
 t.add(Joystick("/dev/input/js0"), "j0_")

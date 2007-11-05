@@ -10,7 +10,7 @@ import random
 # events, and a pipe for the main thread to select on. When an event
 # is found, a single character is sent to the pipe, which causes the
 # thing to unblock, so that the run method can read that character,
-# fetch the event from the queue, and dispatch it.
+# fetch the event from the rueue, and dispatch it.
 
 class MidiInput(PySeq):
   def __init__(self):
