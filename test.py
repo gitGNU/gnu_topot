@@ -6,10 +6,14 @@ from topot import Topot
 from midi import MidiInput, MidiOutput
 from osc import OscOutput 
 
-t = Topot()
 
-t.add(xkey.Keys())
-t.add(XRobot(20))
+def ampMove(input):
+  i = input * 4
+  return i**3
+
+def ampMoveDiscon(input):
+  i = input * 0.7
+  return i**9 * -1
 
 class Printer:
   def start(self, topot):
@@ -18,6 +22,15 @@ class Printer:
     def prnt():
       print prefix, input.value
     return OutputSignal(prnt, input)
+
+t = Topot()
+
+t.add(xkey.Keys())
+t.add(XRobot(20))
+
+t.add(Ticker(20))
+t.add(Joystick("/dev/input/js0"), "j0_")
+
 t.add(Printer())
 t.add(MidiInput())
 t.add(MidiOutput())
@@ -30,7 +43,11 @@ t.connect("print", "Print PgmChange3: ", t.get("pgmchange", 3))
 t.connect("print", "Print PgmChange4: ", t.get("pgmchange", 4))
 t.connect("print", "Print note: ", t.get("note", 49))
 t.connect("print", "key escape: ", t.get("key", 9))
-t.connect("osc", "/sl/0/hit", ("record",), "127.0.0.1", 9951, t.get("key", 9)) 
+t.connect("osc", "/sl/0/hit", ["record"], "127.0.0.1", 9951, t.get("key", 9)) 
+t.connect("osc", "/sl/0/set", ["wet"], "127.0.0.1", 9951, True, primitive(repeat(t.get("tick"), transform(t.get("j0_axis", 1), ampMoveDiscon)), 0, 0, 1))
+t.connect("print", "j0_axis_1: ", primitive(repeat(t.get("tick"), transform(t.get("j0_axis", 1), ampMoveDiscon)), 0, 0, 1))
+
+
 
 """
 t.add(Joystick("/dev/input/js0"), "j0_")
