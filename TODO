@@ -1,2 +1,7 @@
 * check if the logic of not firing up events if value didn't change is good or not
 * standardize input/source in InputSignals (xrobot.py and the rest)
+* find out how to solve problem when events like (keyboard) keys produce two events (1 and 0) which triggers unwanted actions like two osc messages (ie. record in sooperlooper)
+* add read mouse position to InputSignals so mouse could be used as
+  source
+* start use pyliblo instead simpleosc as liblo is standard for osc these
+  days
