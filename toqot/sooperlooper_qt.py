@@ -83,9 +83,9 @@ class LoopVelocity(QGraphicsItem):
   def __init__(self, parent = None):
     super(LoopVelocity, self).__init__(parent)
     self.rectangle = QRectF(0.0, 0.0, 52.0, 52.0)
-    self.color = Qt.yellow
-    self.color80 = QColor(255, 140, 0)
-    self.color90 = Qt.red
+    self.color = QColor(255, 140, 0)
+    self.color80 = Qt.red
+    self.color90 = Qt.darkRed
     self.resolution = 32
     self.velocity = 0
     self.pen = QPen()
@@ -139,7 +139,14 @@ class LoopPlay(QGraphicsItem):
     return path
 
   def paint(self, painter, option, widget):
-    painter.setBrush(self.background)
+    painter.setBrush(self.color)
+    painter.setPen(self.pen)
+    painter.drawEllipse(self.rectangle)
+    
+    brush = QBrush()
+    brush.setColor(self.background)
+    brush.setStyle(Qt.Dense3Pattern) # texture
+    painter.setBrush(brush)
     painter.setPen(self.pen)
     painter.drawEllipse(self.rectangle)
 

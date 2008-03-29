@@ -10,6 +10,10 @@ def pair(a, b):
 def transform(signal, f):
   return Signal(lambda: f(signal.value), signal)
 
+def checkVar(signal, f):
+  print signal
+  return Signal(lambda: f.getFoo(), signal) 
+
 def sticky(signal):
   state = [False]
   def flip():

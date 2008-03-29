@@ -66,7 +66,7 @@ class Topot (SelectLoop):
     self.connected = []
     self.components = []
     self.modifier = InputSignal(set([None]))
-    
+
   def add(self, component, prefix = ""):
     self.prefix = prefix
     self.components.append(component)
