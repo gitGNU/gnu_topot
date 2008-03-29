@@ -1,3 +1,16 @@
+* to check 'maximum recursion depth' when app.processEvents() in update* functions
+* to make version where there is a master CycleTime so it is separated from loops
+  * to make CycleTime ring for loop just in case it's cycle is different from master one
+* to clean up git repository
+* to come up with solution for updateMakeLoop and initOsc
+* to finish QBrush's Qt.Dense3Pattern stuff for next_state and probably mute state
+* to finish layout for all possible states
+* to try context menu for the rest of configuration of sooperlooper
+
+
+
+- - - -
+TODO for old marijn's aproach:
 * check if the logic of not firing up events if value didn't change is good or not
 * standardize input/source in InputSignals (xrobot.py and the rest)
 * find out how to solve problem when events like (keyboard) keys produce two events (1 and 0) which triggers unwanted actions like two osc messages (ie. record in sooperlooper)
