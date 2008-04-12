@@ -120,6 +120,8 @@ class LoopPlay(QGraphicsItem):
   Rect = QRectF(0.0, 0.0, 40.0, 40.0)
   def __init__(self, parent = None):
     super(LoopPlay, self).__init__(parent)
+    self.brush = QBrush()
+    self.nextstate = False
     self.rectangle = QRectF(0.0, 0.0, 40.0, 40.0)
     self.triangle = QPolygon()
     self.triangle.setPoints(15, 10, 30, 20, 15, 30)
@@ -139,16 +141,22 @@ class LoopPlay(QGraphicsItem):
     return path
 
   def paint(self, painter, option, widget):
-    painter.setBrush(self.color)
-    painter.setPen(self.pen)
-    painter.drawEllipse(self.rectangle)
     
-    brush = QBrush()
-    brush.setColor(self.background)
-    brush.setStyle(Qt.Dense3Pattern) # texture
-    painter.setBrush(brush)
-    painter.setPen(self.pen)
-    painter.drawEllipse(self.rectangle)
+    if not self.nextstate:
+      painter.setBrush(self.background)
+      painter.setPen(self.pen)
+      painter.drawEllipse(self.rectangle)  
+    else:           
+      painter.setBrush(self.color)
+      painter.setPen(self.pen)
+      painter.drawEllipse(self.rectangle)
+      
+      self.brush.setColor(self.background)
+      self.brush.setStyle(Qt.Dense3Pattern) # texture
+   
+      painter.setBrush(self.brush)
+      painter.setPen(self.pen)
+      painter.drawEllipse(self.rectangle)
 
     painter.setBrush(self.color)
     painter.drawPolygon(self.triangle)
@@ -157,6 +165,8 @@ class LoopRecord(QGraphicsItem):
   Rect = QRectF(0.0, 0.0, 40.0, 40.0)
   def __init__(self, parent = None):
     super(LoopRecord, self).__init__(parent)
+    self.brush = QBrush()
+    self.nextstate = False
     self.rectangle = QRectF(0.0, 0.0, 40.0, 40.0)
     self.background = QColor(255, 0, 32)
     self.circle = QRectF(15.0, 15.0, 10.0, 10.0)
@@ -173,9 +183,21 @@ class LoopRecord(QGraphicsItem):
     return path
 
   def paint(self, painter, option, widget):
-    painter.setBrush(self.background)
-    painter.setPen(self.pen)
-    painter.drawEllipse(self.rectangle)
+    if not self.nextstate:
+      painter.setBrush(self.background)
+      painter.setPen(self.pen)
+      painter.drawEllipse(self.rectangle)  
+    else:           
+      painter.setBrush(self.color)
+      painter.setPen(self.pen)
+      painter.drawEllipse(self.rectangle)
+      
+      self.brush.setColor(self.background)
+      self.brush.setStyle(Qt.Dense3Pattern) # texture
+   
+      painter.setBrush(self.brush)
+      painter.setPen(self.pen)
+      painter.drawEllipse(self.rectangle)
 
     painter.setBrush(self.color)
     painter.drawEllipse(self.circle)
@@ -184,6 +206,8 @@ class LoopOverdub(QGraphicsItem):
   Rect = QRectF(0.0, 0.0, 40.0, 40.0)
   def __init__(self, parent = None):
     super(LoopOverdub, self).__init__(parent)
+    self.brush = QBrush()
+    self.nextstate = False
     self.rectangle = QRectF(0.0, 0.0, 40.0, 40.0)
     self.background = QColor(255, 0, 32)
     self.leftcircle = QRectF(10.0, 15.0, 10.0, 10.0)
@@ -201,9 +225,21 @@ class LoopOverdub(QGraphicsItem):
     return path
 
   def paint(self, painter, option, widget):
-    painter.setBrush(self.background)
-    painter.setPen(self.pen)
-    painter.drawEllipse(self.rectangle)
+    if not self.nextstate:
+      painter.setBrush(self.background)
+      painter.setPen(self.pen)
+      painter.drawEllipse(self.rectangle)  
+    else:           
+      painter.setBrush(self.color)
+      painter.setPen(self.pen)
+      painter.drawEllipse(self.rectangle)
+      
+      self.brush.setColor(self.background)
+      self.brush.setStyle(Qt.Dense3Pattern) # texture
+   
+      painter.setBrush(self.brush)
+      painter.setPen(self.pen)
+      painter.drawEllipse(self.rectangle)
 
     painter.setBrush(self.color)
     painter.drawEllipse(self.leftcircle)
@@ -213,6 +249,8 @@ class LoopReplace(QGraphicsItem):
   Rect = QRectF(0.0, 0.0, 40.0, 40.0)
   def __init__(self, parent = None):
     super(LoopReplace, self).__init__(parent)
+    self.brush = QBrush()
+    self.nextstate = False
     self.rectangle = QRectF(0.0, 0.0, 40.0, 40.0)
     self.circle = QRectF(20.0, 15.0, 10.0, 10.0)
     self.background = QColor(255, 0, 32)
@@ -232,9 +270,21 @@ class LoopReplace(QGraphicsItem):
     return path
 
   def paint(self, painter, option, widget):
-    painter.setBrush(self.background)
-    painter.setPen(self.pen)
-    painter.drawEllipse(self.rectangle)
+    if not self.nextstate:
+      painter.setBrush(self.background)
+      painter.setPen(self.pen)
+      painter.drawEllipse(self.rectangle)  
+    else:           
+      painter.setBrush(self.color)
+      painter.setPen(self.pen)
+      painter.drawEllipse(self.rectangle)
+      
+      self.brush.setColor(self.background)
+      self.brush.setStyle(Qt.Dense3Pattern) # texture
+   
+      painter.setBrush(self.brush)
+      painter.setPen(self.pen)
+      painter.drawEllipse(self.rectangle)
 
     painter.setBrush(self.color)
     painter.drawEllipse(self.circle)
@@ -245,6 +295,8 @@ class LoopSubstitute(QGraphicsItem):
   Rect = QRectF(0.0, 0.0, 40.0, 40.0)
   def __init__(self, parent = None):
     super(LoopSubstitute, self).__init__(parent)
+    self.brush = QBrush()
+    self.nextstate = False
     self.rectangle = QRectF(0.0, 0.0, 40.0, 40.0)
     self.circle = QRectF(20.0, 15.0, 10.0, 10.0)
     self.triangle = QPolygon()
@@ -266,9 +318,21 @@ class LoopSubstitute(QGraphicsItem):
     return path
 
   def paint(self, painter, option, widget):
-    painter.setBrush(self.background)
-    painter.setPen(self.pen)
-    painter.drawEllipse(self.rectangle)
+    if not self.nextstate:
+      painter.setBrush(self.background)
+      painter.setPen(self.pen)
+      painter.drawEllipse(self.rectangle)  
+    else:           
+      painter.setBrush(self.color)
+      painter.setPen(self.pen)
+      painter.drawEllipse(self.rectangle)
+      
+      self.brush.setColor(self.background)
+      self.brush.setStyle(Qt.Dense3Pattern) # texture
+   
+      painter.setBrush(self.brush)
+      painter.setPen(self.pen)
+      painter.drawEllipse(self.rectangle)
 
     painter.setBrush(self.color)
     painter.drawEllipse(self.circle)
@@ -278,6 +342,8 @@ class LoopInsert(QGraphicsItem):
   Rect = QRectF(0.0, 0.0, 40.0, 40.0)
   def __init__(self, parent = None):
     super(LoopInsert, self).__init__(parent)
+    self.brush = QBrush()
+    self.nextstate = False
     self.rectangle = QRectF(0.0, 0.0, 40.0, 40.0)
     self.leftcircle = QRectF(7.5, 15.0, 10.0, 10.0)
     self.rightcircle = QRectF(22.5, 15.0, 10.0, 10.0)
@@ -298,9 +364,21 @@ class LoopInsert(QGraphicsItem):
     return path
 
   def paint(self, painter, option, widget):
-    painter.setBrush(self.background)
-    painter.setPen(self.pen)
-    painter.drawEllipse(self.rectangle)
+    if not self.nextstate:
+      painter.setBrush(self.background)
+      painter.setPen(self.pen)
+      painter.drawEllipse(self.rectangle)  
+    else:           
+      painter.setBrush(self.color)
+      painter.setPen(self.pen)
+      painter.drawEllipse(self.rectangle)
+      
+      self.brush.setColor(self.background)
+      self.brush.setStyle(Qt.Dense3Pattern) # texture
+   
+      painter.setBrush(self.brush)
+      painter.setPen(self.pen)
+      painter.drawEllipse(self.rectangle)
 
     painter.setBrush(self.color)
     painter.drawEllipse(self.leftcircle)
@@ -312,6 +390,8 @@ class LoopMultiply(QGraphicsItem):
   Rect = QRectF(0.0, 0.0, 40.0, 40.0)
   def __init__(self, parent = None):
     super(LoopMultiply, self).__init__(parent)
+    self.brush = QBrush()
+    self.nextstate = False
     self.rectangle = QRectF(0.0, 0.0, 40.0, 40.0)
     self.background = QColor(255, 0, 32)
     self.leftcircle = QRectF(7.5, 15.0, 10.0, 10.0)
@@ -330,9 +410,21 @@ class LoopMultiply(QGraphicsItem):
     return path
 
   def paint(self, painter, option, widget):
-    painter.setBrush(self.background)
-    painter.setPen(self.pen)
-    painter.drawEllipse(self.rectangle)
+    if not self.nextstate:
+      painter.setBrush(self.background)
+      painter.setPen(self.pen)
+      painter.drawEllipse(self.rectangle)  
+    else:           
+      painter.setBrush(self.color)
+      painter.setPen(self.pen)
+      painter.drawEllipse(self.rectangle)
+      
+      self.brush.setColor(self.background)
+      self.brush.setStyle(Qt.Dense3Pattern) # texture
+   
+      painter.setBrush(self.brush)
+      painter.setPen(self.pen)
+      painter.drawEllipse(self.rectangle)
 
     painter.setBrush(self.color)
     painter.drawEllipse(self.leftcircle)
