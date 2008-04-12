@@ -29,6 +29,7 @@ class OscServer(liblo.ServerThread):
     liblo.send(self.target, '/sl/%s/register_auto_update' % loop, 'loop_pos', 100, 'osc.udp://localhost:%s' % OSC_SERVER_PORT, '/looppos')
     liblo.send(self.target, '/sl/%s/register_auto_update' % loop, 'wet', 100, 'osc.udp://localhost:%s' % OSC_SERVER_PORT, '/loopvelocity')
     liblo.send(self.target, '/sl/%s/register_auto_update' % loop, 'state', 100, 'osc.udp://localhost:%s' % OSC_SERVER_PORT, '/loopstate')
+    liblo.send(self.target, '/sl/%s/register_auto_update' % loop, 'next_state', 100, 'osc.udp://localhost:%s' % OSC_SERVER_PORT, '/loopnextstate')
     liblo.send(self.target, '/sl/%s/register_auto_update' % loop, 'cycle_len', 100, 'osc.udp://localhost:%s' % OSC_SERVER_PORT, '/cyclelen')
     liblo.send(self.target, '/sl/%s/register_auto_update' % loop, 'loop_len', 100, 'osc.udp://localhost:%s' % OSC_SERVER_PORT, '/looplen')
 
@@ -61,6 +62,13 @@ class OscServer(liblo.ServerThread):
     loopnumber, state, value = args
     #log("received '%s' message with arguments: %s, %s, %f" % (path, loopnumber, state, value))
     self.emitter.emitM('loopstate', loopnumber, value)
+
+  @liblo.make_method('/loopnextstate', 'isf')
+  def loopstate_callback(self, path, args):
+    loopnumber, state, value = args
+    #log("received '%s' message with arguments: %s, %s, %f" % (path, loopnumber, state, value))
+    self.emitter.emitM('loopnextstate', loopnumber, value)
+
 
   @liblo.make_method('/loopvelocity', 'isf')
   def loopvelocity_callback(self, path, args):
