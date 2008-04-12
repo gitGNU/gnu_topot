@@ -25,6 +25,8 @@ class CycleTime(QGraphicsItem):
   def __init__(self, parent = None):
     super(CycleTime, self).__init__(parent)
     self.rectangle = QRectF(5.0, 5.0, 90.0, 90.0)
+    self.defaultbackground = Qt.lightGray
+    self.background = Qt.lightGray
     self.color = QColor(255, 0, 32)
     self.cyclepos = 0
     self.cyclelen = 1
@@ -40,7 +42,7 @@ class CycleTime(QGraphicsItem):
     return path
 
   def paint(self, painter, option, widget):
-    painter.setBrush(Qt.lightGray)
+    painter.setBrush(self.background)
     painter.setPen(self.pen)
     painter.drawEllipse(self.rectangle)
 

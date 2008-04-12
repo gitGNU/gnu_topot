@@ -21,11 +21,14 @@ class MySooperLooperWidget(QObject):
     self.myLoopMultiply = []
     self.myWidgetGroup = []
     self.loops = []
-    self.currentstate = self.myLoopPlay
+    self.currentstate = []
 
   def makeLoop(self, loop):
     self.loops.append(loop)
     self.emit(SIGNAL('makeloop'), loop)
+
+    self.currentstate.append(loop)
+    self.currentstate[loop] = mySooperLooperWidget.myLoopPlay
 
     self.myCycleTime.append(loop)
     self.myCycleTime[loop] = CycleTime()
@@ -92,7 +95,6 @@ class MySooperLooperWidget(QObject):
     self.myLoopMultiply[loop].hide()
     self.myScene.scene.addItem(self.myLoopMultiply[loop])
 
-
     self.myWidgetGroup.append(loop)
     self.myWidgetGroup[loop] = self.myScene.scene.createItemGroup([self.myCycleTime[loop], self.myLoopCycles[loop], self.myLoopVelocity[loop], self.myLoopPlay[loop], self.myLoopRecord[loop], self.myLoopOverdub[loop], self.myLoopReplace[loop], self.myLoopSubstitute[loop], self.myLoopInsert[loop], self.myLoopMultiply[loop]])
     self.myWidgetGroup[loop].setPos(loop*100, 0)
@@ -101,11 +103,41 @@ class MySooperLooperWidget(QObject):
     self.myScene.view.show()
 
 
-#states = ["todo", "todo", myLoopRecord, "todo", myLoopPlay, myLoopOverdub, myLoopMultiply, myLoopInsert, myLoopReplace, "todo", "todo", "todo", "todo", myLoopSubstitute, "todo"]
-
 mySooperLooperWidget = MySooperLooperWidget()
 
-#mySooperLooperWidget.currentstate
+states = ["todo",
+          "todo",
+          mySooperLooperWidget.myLoopRecord, 
+          "todo",
+          mySooperLooperWidget.myLoopPlay,
+          mySooperLooperWidget.myLoopOverdub,
+          mySooperLooperWidget.myLoopMultiply,
+          mySooperLooperWidget.myLoopInsert,
+          mySooperLooperWidget.myLoopReplace,
+          "todo",
+          "todo",
+          "todo",
+          "todo",
+          mySooperLooperWidget.myLoopSubstitute,
+          "todo"]
+
+#mySooperLooperWidget.currentstate[loopnumber] = mySooperLooperWidget.myLoopPlay
+
+def updateLoopState(loopnumber, state):
+  state = int(state)
+  if states[state] == "todo":
+    log("todo this state...")
+  else:
+    log(states[state])
+    currentwidget = mySooperLooperWidget.currentstate[loopnumber]
+    getattr(currentwidget[loopnumber], "hide")()
+    mySooperLooperWidget.myCycleTime[loopnumber].color = states[state][loopnumber].background
+    states[state][loopnumber].show()
+    if states[state] == mySooperLooperWidget.myLoopRecord:
+      mySooperLooperWidget.myCycleTime[loopnumber].background = mySooperLooperWidget.myLoopRecord[loopnumber].background
+    else:
+      mySooperLooperWidget.myCycleTime[loopnumber].background = mySooperLooperWidget.myCycleTime[loopnumber].defaultbackground
+    mySooperLooperWidget.currentstate[loopnumber] = states[state] #??
 
 def updateVelocity(loopnumber, velocity):
   if velocity <= 0:
@@ -113,23 +145,23 @@ def updateVelocity(loopnumber, velocity):
   else:
     mySooperLooperWidget.myLoopVelocity[loopnumber].velocity = (((6.0 * math.log(velocity)/math.log(2.)+198)/198.)**8) * 32
   mySooperLooperWidget.myLoopVelocity[loopnumber].update()
-  app.processEvents()
 
 def updateCycleLen(loopnumber, cyclelen):
   mySooperLooperWidget.myCycleTime[loopnumber].cyclelen = cyclelen
 
 def updateLoopLen(loopnumber, looplen):
-  mySooperLooperWidget.myLoopCycles[loopnumber].looplen = int(round(looplen/mySooperLooperWidget.myCycleTime[loopnumber].cyclelen)) 
+  if mySooperLooperWidget.myCycleTime[loopnumber].cyclelen != 0:
+    mySooperLooperWidget.myLoopCycles[loopnumber].looplen = int(round(looplen/mySooperLooperWidget.myCycleTime[loopnumber].cyclelen)) 
     
 def updateLoopPos(loopnumber, looppos):
   mySooperLooperWidget.myCycleTime[loopnumber].cyclepos = (looppos - (int(looppos/mySooperLooperWidget.myCycleTime[loopnumber].cyclelen) * mySooperLooperWidget.myCycleTime[loopnumber].cyclelen))/mySooperLooperWidget.myCycleTime[loopnumber].cyclelen*360
   mySooperLooperWidget.myLoopCycles[loopnumber].currentloop = int(looppos/mySooperLooperWidget.myCycleTime[loopnumber].cyclelen)
   mySooperLooperWidget.myCycleTime[loopnumber].update()
   mySooperLooperWidget.myLoopCycles[loopnumber].update()
-  #app.processEvents()
 
 def updateMakeLoop(loop):
-  oscserver.initOsc(loop)
+  pass
+  #oscserver.initOsc(loop)
 
 #QObject.connect(oscserver.emitter, SIGNAL('loopvelocity'), updateVelocity)
 oscserver.start()
@@ -138,27 +170,27 @@ oscserver.start()
 mySooperLooperWidget.makeLoop(0)
 mySooperLooperWidget.makeLoop(1)
 mySooperLooperWidget.makeLoop(2)
-mySooperLooperWidget.makeLoop(3)
-mySooperLooperWidget.makeLoop(4)
-mySooperLooperWidget.makeLoop(5)
-mySooperLooperWidget.makeLoop(6)
-mySooperLooperWidget.makeLoop(7)
+#mySooperLooperWidget.makeLoop(3)
+#mySooperLooperWidget.makeLoop(4)
+#mySooperLooperWidget.makeLoop(5)
+#mySooperLooperWidget.makeLoop(6)
+#mySooperLooperWidget.makeLoop(7)
 
 
 QObject.connect(oscserver.emitter, SIGNAL('loopvelocity'), updateVelocity)
 QObject.connect(oscserver.emitter, SIGNAL('cyclelen'), updateCycleLen)
 QObject.connect(oscserver.emitter, SIGNAL('looplen'), updateLoopLen)
 QObject.connect(oscserver.emitter, SIGNAL('looppos'), updateLoopPos)
-#QObject.connect(oscserver.emitter, SIGNAL('loopstate'), updateLoopState)
+QObject.connect(oscserver.emitter, SIGNAL('loopstate'), updateLoopState)
 
-oscserver.initOsc(0)
-oscserver.initOsc(1)
-oscserver.initOsc(2)
-oscserver.initOsc(3)
-oscserver.initOsc(4)
-oscserver.initOsc(5)
-oscserver.initOsc(6)
-oscserver.initOsc(7)
+#oscserver.initOsc(0)
+#oscserver.initOsc(1)
+#oscserver.initOsc(2)
+#oscserver.initOsc(3)
+#oscserver.initOsc(4)
+#oscserver.initOsc(5)
+#oscserver.initOsc(6)
+#oscserver.initOsc(7)
 
 #app.exec_()
 
