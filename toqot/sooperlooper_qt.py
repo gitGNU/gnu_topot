@@ -454,6 +454,11 @@ class LoopMultiply(QGraphicsItem):
 class LoopName(QGraphicsSimpleTextItem):
   def __init__(self, parent = None):
     super(LoopName, self).__init__(parent)
+    self.font = QFont()
+    self.font.setFamily("Arial Black")
+    self.font.setPointSize(20)
+    #self.font.setBold(True)
+    self.setFont(self.font)
     self.name = ""
 
 app = QApplication(sys.argv)

@@ -102,6 +102,7 @@ class MySooperLooperWidget(QObject):
     getattr(self.myLoopName[loop], "setBrush")(Qt.black)
     getattr(self.myLoopName[loop], "setText")(self.myLoopName[loop].name)
     getattr(self.myLoopName[loop], "setPos")(6,6)
+    getattr(self.myLoopName[loop], "setZValue")(10)
     self.myScene.scene.addItem(self.myLoopName[loop])
 
     self.myWidgetGroup.append(loop)
@@ -200,11 +201,11 @@ oscserver.start()
 mySooperLooperWidget.makeLoop(0)
 mySooperLooperWidget.makeLoop(1)
 mySooperLooperWidget.makeLoop(2)
-#mySooperLooperWidget.makeLoop(3)
-#mySooperLooperWidget.makeLoop(4)
-#mySooperLooperWidget.makeLoop(5)
-#mySooperLooperWidget.makeLoop(6)
-#mySooperLooperWidget.makeLoop(7)
+mySooperLooperWidget.makeLoop(3)
+mySooperLooperWidget.makeLoop(4)
+mySooperLooperWidget.makeLoop(5)
+mySooperLooperWidget.makeLoop(6)
+mySooperLooperWidget.makeLoop(7)
 
 
 QObject.connect(oscserver.emitter, SIGNAL('loopvelocity'), updateVelocity)
@@ -226,73 +227,41 @@ QObject.connect(oscserver.emitter, SIGNAL('loopnextstate'), updateLoopNextState)
 #app.exec_()
 
 """
-QObject.connect(mySooperLooperWidget, SIGNAL('makeloop'), updateMakeLoop)
-
-mySooperLooperWidget.makeLoop(0)
-mySooperLooperWidget.makeLoop(1)
-mySooperLooperWidget.makeLoop(2)
-mySooperLooperWidget.makeLoop(3)
-mySooperLooperWidget.makeLoop(4)
-
-
-QObject.connect(oscserver.emitter, SIGNAL('loopvelocity'), updateVelocity)
-QObject.connect(oscserver.emitter, SIGNAL('cyclelen'), updateCycleLen)
-QObject.connect(oscserver.emitter, SIGNAL('looplen'), updateLoopLen)
-QObject.connect(oscserver.emitter, SIGNAL('looppos'), updateLoopPos)
-QObject.connect(oscserver.emitter, SIGNAL('loopstate'), updateLoopState)
-
+## 4x4 grid layout with one big at top right which goes from (1,0) to (2,3)
+_ip.magic("run -i sooperlooper_qt.py")
+_ip.magic("run -i osc_server.py")
+_ip.magic("run -i ipython_test2.py")
 oscserver.initOsc(0)
 oscserver.initOsc(1)
 oscserver.initOsc(2)
 oscserver.initOsc(3)
 oscserver.initOsc(4)
-
-states = ["todo", "todo", myLoopRecord, "todo", myLoopPlay, myLoopOverdub, myLoopMultiply, myLoopInsert, myLoopReplace, "todo", "todo", "todo", "todo", myLoopSubstitute, "todo"] 
-
-myScene.view.current = myLoopPlay
-
-def updateVelocity(loopnumber, velocity):
-  if velocity <= 0:
-    mySooperLooperWidget.myLoopVelocity[loopnumber].velocity = 0
-  else:
-    mySooperLooperWidget.myLoopVelocity[loopnumber].velocity = (((6.0 * math.log(velocity)/math.log(2.)+198)/198.)**8) * 32
-  mySooperLooperWidget.myLoopVelocity[loopnumber].update()
-  app.processEvents()
-
-def updateCycleLen(cyclelen):
-  myCycleTime.cyclelen = cyclelen
-
-def updateLoopLen(looplen):
-  myLoopCycles[loop].looplen = int(round(looplen/myCycleTime.cyclelen)) 
-    
-def updateLoopPos(looppos):
-  myCycleTime.cyclepos = (looppos - (int(looppos/myCycleTime.cyclelen) * myCycleTime.cyclelen))/myCycleTime.cyclelen*360
-  myLoopCycles.currentloop = int(looppos/myCycleTime.cyclelen)
-  myCycleTime.update()
-  myLoopCycles.update()
-  app.processEvents()
-
-def updateLoopState(state):
-  state = int(state)
-  if states[state] == "todo":
-    log("todo this state...")
-  else:
-    log(states[state])
-    myScene.view.current.hide()
-    myCycleTime.color = states[state].background
-    states[state].show()
-    if states[state] == myLoopRecord:
-      myCycleTime.cyclepos = 360
-    myScene.view.current = states[state]
+oscserver.initOsc(5)
+oscserver.initOsc(6)
+oscserver.initOsc(7)
+mySooperLooperWidget.myWidgetGroup[1].setPos(0,200)
+mySooperLooperWidget.myWidgetGroup[1].setPos(0,100)
+mySooperLooperWidget.myWidgetGroup[2].setPos(0,200)
+mySooperLooperWidget.myWidgetGroup[3].setPos(0,300)
+mySooperLooperWidget.myWidgetGroup[4].setPos(100,300)
+mySooperLooperWidget.myWidgetGroup[5].setPos(200,300)
+mySooperLooperWidget.myWidgetGroup[6].setPos(300,300)
+mySooperLooperWidget.myWidgetGroup[7].scale(3,3)
+mySooperLooperWidget.myWidgetGroup[7].setPos(100,0)
+mySooperLooperWidget.myScene.scene.setBackgroundBrush(Qt.gray)
+mySooperLooperWidget.myScene.view.setWindowTitle("topot_sooperlooper")
+mySooperLooperWidget.myScene.view.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+mySooperLooperWidget.myScene.view.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+mySooperLooperWidget.myScene.view.setGeometry(0,0,400,400)
 
 
-QObject.connect(oscserver.emitter, SIGNAL('loopvelocity'), updateVelocity)
-QObject.connect(oscserver.emitter, SIGNAL('cyclelen'), updateCycleLen)
-QObject.connect(oscserver.emitter, SIGNAL('looplen'), updateLoopLen)
-QObject.connect(oscserver.emitter, SIGNAL('looppos'), updateLoopPos)
-QObject.connect(oscserver.emitter, SIGNAL('loopstate'), updateLoopState)
+mySooperLooperWidget.myScene.view.setGeometry(0,0,600,600)
+allTogether = mySooperLooperWidget.myScene.scene.createItemGroup([mySooperLooperWidget.myWidgetGroup[0], mySooperLooperWidget.myWidgetGroup[1], mySooperLooperWidget.myWidgetGroup[2], mySooperLooperWidget.myWidgetGroup[3], mySooperLooperWidget.myWidgetGroup[4], mySooperLooperWidget.myWidgetGroup[5], mySooperLooperWidget.myWidgetGroup[6], mySooperLooperWidget.myWidgetGroup[7]])
+allTogether.scale(1.5, 1.5)
+allTogether.setPos(0,0)
 
-oscserver.start()
-oscserver.initOsc()
-app.exec_()
+brush = QBrush()
+brush.setColor(Qt.darkCyan)
+brush.setStyle(Qt.Dense4Pattern)
+mySooperLooperWidget.myScene.scene.setBackgroundBrush(brush)
 """
