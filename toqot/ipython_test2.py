@@ -84,7 +84,7 @@ class MySooperLooperWidget(QObject):
     self.myLoopInsert.append(loop)
     self.myLoopInsert[loop] = LoopInsert()
     self.myLoopInsert[loop].setPos(30,30)
-    self.myLoopInsert[loop].setZValue(8)
+    self.myLoopInsert[loop].setZValue(3)
     self.myLoopInsert[loop].hide()
     self.myScene.scene.addItem(self.myLoopInsert[loop])
     
@@ -123,6 +123,24 @@ states = ["todo",
 
 #mySooperLooperWidget.currentstate[loopnumber] = mySooperLooperWidget.myLoopPlay
 
+def updateLoopNextState(loopnumber, state):
+  state = int(state)
+  if states[state] == "todo":
+    log("todo this state...")
+  else:
+    log(states[state])
+    currentwidget = mySooperLooperWidget.currentstate[loopnumber]
+    getattr(currentwidget[loopnumber], "hide")()
+    mySooperLooperWidget.myCycleTime[loopnumber].color = states[state][loopnumber].background
+    states[state][loopnumber].nextstate = True
+    mySooperLooperWidget.myCycleTime[loopnumber].nextstate = True
+    states[state][loopnumber].show()
+    if states[state] == mySooperLooperWidget.myLoopRecord:
+      mySooperLooperWidget.myCycleTime[loopnumber].background = mySooperLooperWidget.myLoopRecord[loopnumber].background
+    else:
+      mySooperLooperWidget.myCycleTime[loopnumber].background = mySooperLooperWidget.myCycleTime[loopnumber].defaultbackground
+    mySooperLooperWidget.currentstate[loopnumber] = states[state]
+
 def updateLoopState(loopnumber, state):
   state = int(state)
   if states[state] == "todo":
@@ -132,12 +150,14 @@ def updateLoopState(loopnumber, state):
     currentwidget = mySooperLooperWidget.currentstate[loopnumber]
     getattr(currentwidget[loopnumber], "hide")()
     mySooperLooperWidget.myCycleTime[loopnumber].color = states[state][loopnumber].background
+    states[state][loopnumber].nextstate = False
+    mySooperLooperWidget.myCycleTime[loopnumber].nextstate = False
     states[state][loopnumber].show()
     if states[state] == mySooperLooperWidget.myLoopRecord:
       mySooperLooperWidget.myCycleTime[loopnumber].background = mySooperLooperWidget.myLoopRecord[loopnumber].background
     else:
       mySooperLooperWidget.myCycleTime[loopnumber].background = mySooperLooperWidget.myCycleTime[loopnumber].defaultbackground
-    mySooperLooperWidget.currentstate[loopnumber] = states[state] #??
+    mySooperLooperWidget.currentstate[loopnumber] = states[state]
 
 def updateVelocity(loopnumber, velocity):
   if velocity <= 0:
@@ -154,10 +174,11 @@ def updateLoopLen(loopnumber, looplen):
     mySooperLooperWidget.myLoopCycles[loopnumber].looplen = int(round(looplen/mySooperLooperWidget.myCycleTime[loopnumber].cyclelen)) 
     
 def updateLoopPos(loopnumber, looppos):
-  mySooperLooperWidget.myCycleTime[loopnumber].cyclepos = (looppos - (int(looppos/mySooperLooperWidget.myCycleTime[loopnumber].cyclelen) * mySooperLooperWidget.myCycleTime[loopnumber].cyclelen))/mySooperLooperWidget.myCycleTime[loopnumber].cyclelen*360
-  mySooperLooperWidget.myLoopCycles[loopnumber].currentloop = int(looppos/mySooperLooperWidget.myCycleTime[loopnumber].cyclelen)
-  mySooperLooperWidget.myCycleTime[loopnumber].update()
-  mySooperLooperWidget.myLoopCycles[loopnumber].update()
+  if looppos/mySooperLooperWidget.myCycleTime[loopnumber].cyclelen != 0:
+    mySooperLooperWidget.myCycleTime[loopnumber].cyclepos = (looppos - (int(looppos/mySooperLooperWidget.myCycleTime[loopnumber].cyclelen) * mySooperLooperWidget.myCycleTime[loopnumber].cyclelen))/mySooperLooperWidget.myCycleTime[loopnumber].cyclelen*360
+    mySooperLooperWidget.myLoopCycles[loopnumber].currentloop = int(looppos/mySooperLooperWidget.myCycleTime[loopnumber].cyclelen)
+    mySooperLooperWidget.myCycleTime[loopnumber].update()
+    mySooperLooperWidget.myLoopCycles[loopnumber].update()
 
 def updateMakeLoop(loop):
   pass
@@ -182,6 +203,7 @@ QObject.connect(oscserver.emitter, SIGNAL('cyclelen'), updateCycleLen)
 QObject.connect(oscserver.emitter, SIGNAL('looplen'), updateLoopLen)
 QObject.connect(oscserver.emitter, SIGNAL('looppos'), updateLoopPos)
 QObject.connect(oscserver.emitter, SIGNAL('loopstate'), updateLoopState)
+QObject.connect(oscserver.emitter, SIGNAL('loopnextstate'), updateLoopNextState)
 
 #oscserver.initOsc(0)
 #oscserver.initOsc(1)

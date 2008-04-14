@@ -24,9 +24,11 @@ class CycleTime(QGraphicsItem):
   Rect = QRectF(0, 0, 100,100)
   def __init__(self, parent = None):
     super(CycleTime, self).__init__(parent)
+    self.brush = QBrush()
     self.rectangle = QRectF(5.0, 5.0, 90.0, 90.0)
     self.defaultbackground = Qt.lightGray
     self.background = Qt.lightGray
+    self.nextstate = False
     self.color = QColor(255, 0, 32)
     self.cyclepos = 0
     self.cyclelen = 1
@@ -42,12 +44,28 @@ class CycleTime(QGraphicsItem):
     return path
 
   def paint(self, painter, option, widget):
-    painter.setBrush(self.background)
-    painter.setPen(self.pen)
-    painter.drawEllipse(self.rectangle)
+    if not self.nextstate:
+      painter.setBrush(self.background)
+      painter.setPen(self.pen)
+      painter.drawEllipse(self.rectangle)
 
-    painter.setBrush(self.color)
-    painter.drawPie(self.rectangle, 90*16, -self.cyclepos *16)
+      painter.setBrush(self.color)
+      painter.drawPie(self.rectangle, 90*16, -self.cyclepos *16)
+    else:
+      painter.setBrush(self.background) #??
+      painter.setPen(self.pen)
+      painter.drawEllipse(self.rectangle)
+
+      painter.setBrush(Qt.black)
+      painter.setPen(self.pen)
+      painter.drawPie(self.rectangle, 90*16, -self.cyclepos *16)
+
+      self.brush.setColor(self.color)
+      self.brush.setStyle(Qt.Dense3Pattern) # texture
+      painter.setBrush(self.brush)
+      painter.setPen(self.pen)
+      painter.drawPie(self.rectangle, 90*16, -self.cyclepos *16)
+
 
 class LoopCycles(QGraphicsItem):
   Rect = QRectF(0, 0, 70,70)
@@ -143,7 +161,7 @@ class LoopPlay(QGraphicsItem):
     return path
 
   def paint(self, painter, option, widget):
-    
+  #??  
     if not self.nextstate:
       painter.setBrush(self.background)
       painter.setPen(self.pen)
