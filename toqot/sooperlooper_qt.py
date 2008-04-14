@@ -7,7 +7,7 @@ class MainForm(QDialog):
     super(MainForm, self).__init__(parent)
 
     self.scene = QGraphicsScene(self)
-    self.scene.setSceneRect(0, 0, 200, 200)
+    self.scene.setSceneRect(0, 0, 800, 800)
     self.view = QGraphicsView()
     self.view.setRenderHint(QPainter.Antialiasing)
     self.view.setScene(self.scene)
@@ -451,7 +451,10 @@ class LoopMultiply(QGraphicsItem):
     painter.drawEllipse(self.circle)
     painter.drawEllipse(self.rightcircle)
 
-
+class LoopName(QGraphicsSimpleTextItem):
+  def __init__(self, parent = None):
+    super(LoopName, self).__init__(parent)
+    self.name = ""
 
 app = QApplication(sys.argv)
 myScene = MainForm()

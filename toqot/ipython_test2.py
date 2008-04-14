@@ -19,6 +19,7 @@ class MySooperLooperWidget(QObject):
     self.myLoopSubstitute = []
     self.myLoopInsert = []
     self.myLoopMultiply = []
+    self.myLoopName = []
     self.myWidgetGroup = []
     self.loops = []
     self.currentstate = []
@@ -95,8 +96,16 @@ class MySooperLooperWidget(QObject):
     self.myLoopMultiply[loop].hide()
     self.myScene.scene.addItem(self.myLoopMultiply[loop])
 
+    self.myLoopName.append(loop)
+    self.myLoopName[loop] = LoopName()
+    self.myLoopName[loop].name = str(loop+1)
+    getattr(self.myLoopName[loop], "setBrush")(Qt.black)
+    getattr(self.myLoopName[loop], "setText")(self.myLoopName[loop].name)
+    getattr(self.myLoopName[loop], "setPos")(6,6)
+    self.myScene.scene.addItem(self.myLoopName[loop])
+
     self.myWidgetGroup.append(loop)
-    self.myWidgetGroup[loop] = self.myScene.scene.createItemGroup([self.myCycleTime[loop], self.myLoopCycles[loop], self.myLoopVelocity[loop], self.myLoopPlay[loop], self.myLoopRecord[loop], self.myLoopOverdub[loop], self.myLoopReplace[loop], self.myLoopSubstitute[loop], self.myLoopInsert[loop], self.myLoopMultiply[loop]])
+    self.myWidgetGroup[loop] = self.myScene.scene.createItemGroup([self.myCycleTime[loop], self.myLoopCycles[loop], self.myLoopVelocity[loop], self.myLoopPlay[loop], self.myLoopRecord[loop], self.myLoopOverdub[loop], self.myLoopReplace[loop], self.myLoopSubstitute[loop], self.myLoopInsert[loop], self.myLoopMultiply[loop], self.myLoopName[loop]])
     self.myWidgetGroup[loop].setPos(loop*100, 0)
     self.myWidgetGroup[loop].setFlag(QGraphicsItem.ItemIsMovable)
     
