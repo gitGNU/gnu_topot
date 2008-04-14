@@ -64,7 +64,7 @@ class OscServer(liblo.ServerThread):
     self.emitter.emitM('loopstate', loopnumber, value)
 
   @liblo.make_method('/loopnextstate', 'isf')
-  def loopstate_callback(self, path, args):
+  def loopnextstate_callback(self, path, args):
     loopnumber, state, value = args
     #log("received '%s' message with arguments: %s, %s, %f" % (path, loopnumber, state, value))
     self.emitter.emitM('loopnextstate', loopnumber, value)
