@@ -451,15 +451,51 @@ class LoopMultiply(QGraphicsItem):
     painter.drawEllipse(self.circle)
     painter.drawEllipse(self.rightcircle)
 
-class LoopName(QGraphicsSimpleTextItem):
+class LoopNumber(QGraphicsSimpleTextItem):
   def __init__(self, parent = None):
-    super(LoopName, self).__init__(parent)
+    super(LoopNumber, self).__init__(parent)
     self.font = QFont()
     self.font.setFamily("Arial Black")
     self.font.setPointSize(20)
     #self.font.setBold(True)
     self.setFont(self.font)
     self.name = ""
+
+class LoopName(QGraphicsSimpleTextItem):
+  def __init__(self, parent = None):
+    super(LoopName, self).__init__(parent)
+    self.font = QFont()
+    self.font.setFamily("Arial Black")
+    self.font.setPointSize(12)
+    self.font.setBold(True)
+    self.setFont(self.font)
+    self.name = ""
+
+
+
+class LoopEmpty(QGraphicsItem):
+  Rect = QRectF(0, 0, 100,100)
+  def __init__(self, parent = None):
+    super(LoopEmpty, self).__init__(parent)
+    self.brush = QBrush()
+    self.rectangle = QRectF(5.0, 5.0, 90.0, 90.0)
+    self.background = Qt.lightGray
+    self.color = QColor(255, 0, 32)
+    self.pen = QPen()
+    self.pen.setWidth(0)
+
+  def boundingRect(self):
+    return self.Rect
+
+  def shape(self):
+    path = QPainterPath()
+    path.addEllipse(self.Rect)
+    return path
+
+  def paint(self, painter, option, widget):
+    painter.setBrush(self.background)
+    painter.setPen(self.pen)
+    painter.drawEllipse(self.rectangle)
 
 app = QApplication(sys.argv)
 myScene = MainForm()
@@ -515,6 +551,7 @@ myLoopMultiply.setZValue(9)
 myScene.scene.addItem(myLoopMultiply)
 
 myScene.view.show()
+
 
 itemsGroup = myScene.scene.createItemGroup([myCycleTime, myLoopCycles, myLoopVelocity, myLoopPlay, myLoopRecord, myLoopOverdub, myLoopReplace, myLoopSubstitute, myLoopInsert, myLoopMultiply])
 itemsGroup.setFlag(QGraphicsItem.ItemIsMovable)
