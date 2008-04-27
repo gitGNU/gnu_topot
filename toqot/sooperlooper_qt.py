@@ -471,8 +471,6 @@ class LoopName(QGraphicsSimpleTextItem):
     self.setFont(self.font)
     self.name = ""
 
-
-
 class LoopEmpty(QGraphicsItem):
   Rect = QRectF(0, 0, 100,100)
   def __init__(self, parent = None):

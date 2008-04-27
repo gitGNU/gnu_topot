@@ -165,6 +165,8 @@ states = ["todo",
           mySooperLooperWidget.myLoopSubstitute,
           "todo"]
 
+selected = 0
+
 #mySooperLooperWidget.currentstate[loopnumber] = mySooperLooperWidget.myLoopPlay
 
 def updateLoopNextState(loopnumber, state):
@@ -228,7 +230,21 @@ def updateMakeLoop(loop):
   pass
   #oscserver.initOsc(loop)
 
-#QObject.connect(oscserver.emitter, SIGNAL('loopvelocity'), updateVelocity)
+def updateSelectedLoopNum(loopnum):
+  global selected
+  mySooperLooperWidget.myWidgetGroup[selected].scale(.3125, .3125)
+  
+  if selected <= 3:
+    mySooperLooperWidget.myWidgetGroup[selected].setPos(0,selected*100)
+  else:
+    mySooperLooperWidget.myWidgetGroup[selected].setPos((selected-3)*100,300)
+ 
+  selected = int(loopnum)
+
+  mySooperLooperWidget.myWidgetGroup[selected].scale(3.2, 3.2)
+  mySooperLooperWidget.myWidgetGroup[selected].setPos(88, -8)
+  
+
 oscserver.start()
 #oscserver.initOsc()
 
@@ -247,6 +263,7 @@ QObject.connect(oscserver.emitter, SIGNAL('looplen'), updateLoopLen)
 QObject.connect(oscserver.emitter, SIGNAL('looppos'), updateLoopPos)
 QObject.connect(oscserver.emitter, SIGNAL('loopstate'), updateLoopState)
 QObject.connect(oscserver.emitter, SIGNAL('loopnextstate'), updateLoopNextState)
+QObject.connect(oscserver.emitter, SIGNAL('selectedloopnum'), updateSelectedLoopNum)
 
 #oscserver.initOsc(0)
 #oscserver.initOsc(1)
@@ -284,8 +301,8 @@ mySooperLooperWidget.myWidgetEmptyGroup[5].setPos(200,300)
 mySooperLooperWidget.myWidgetGroup[6].setPos(300,300)
 mySooperLooperWidget.myWidgetEmptyGroup[6].setPos(300,300)
 
-mySooperLooperWidget.myWidgetGroup[1].scale(3.2,3.2)
-mySooperLooperWidget.myWidgetGroup[1].setPos(88,-8)
+mySooperLooperWidget.myWidgetGroup[0].scale(3.2,3.2)
+mySooperLooperWidget.myWidgetGroup[0].setPos(88,-8)
 
 mySooperLooperWidget.myScene.scene.setBackgroundBrush(Qt.gray)
 mySooperLooperWidget.myScene.view.setWindowTitle("topot_sooperlooper")
@@ -302,6 +319,6 @@ brush.setStyle(Qt.Dense4Pattern)
 mySooperLooperWidget.myScene.scene.setBackgroundBrush(brush)
 allTogether.setPos(70,150)
 
-mySooperLooperWidget.myWidgetGroup[1].scale(.3125, .3125)
-mySooperLooperWidget.myWidgetGroup[1].setPos(0,100)
+mySooperLooperWidget.myWidgetGroup[0].scale(.3125, .3125)
+mySooperLooperWidget.myWidgetGroup[0].setPos(0,100)
 """

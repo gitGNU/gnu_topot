@@ -32,6 +32,7 @@ class OscServer(liblo.ServerThread):
     liblo.send(self.target, '/sl/%s/register_auto_update' % loop, 'next_state', 100, 'osc.udp://localhost:%s' % OSC_SERVER_PORT, '/loopnextstate')
     liblo.send(self.target, '/sl/%s/register_auto_update' % loop, 'cycle_len', 100, 'osc.udp://localhost:%s' % OSC_SERVER_PORT, '/cyclelen')
     liblo.send(self.target, '/sl/%s/register_auto_update' % loop, 'loop_len', 100, 'osc.udp://localhost:%s' % OSC_SERVER_PORT, '/looplen')
+    liblo.send(self.target, '/register_auto_update', 'selected_loop_num', 100, 'osc.udp://localhost:%s' % OSC_SERVER_PORT, '/selectedloopnum')
 
   @liblo.make_method('/cyclelen', 'isf')
   def cyclelen_callback(self, path, args):
@@ -60,7 +61,7 @@ class OscServer(liblo.ServerThread):
   @liblo.make_method('/loopstate', 'isf')
   def loopstate_callback(self, path, args):
     loopnumber, state, value = args
-    #log("received '%s' message with arguments: %s, %s, %f" % (path, loopnumber, state, value))
+    log("received '%s' message with arguments: %s, %s, %f" % (path, loopnumber, state, value))
     self.emitter.emitM('loopstate', loopnumber, value)
 
   @liblo.make_method('/loopnextstate', 'isf')
@@ -69,17 +70,22 @@ class OscServer(liblo.ServerThread):
     #log("received '%s' message with arguments: %s, %s, %f" % (path, loopnumber, state, value))
     self.emitter.emitM('loopnextstate', loopnumber, value)
 
-
   @liblo.make_method('/loopvelocity', 'isf')
   def loopvelocity_callback(self, path, args):
     loopnumber, control, value = args
     #log("received '%s' message with arguments: %s, %s, %f" % (path, loopnumber, control, value))
     self.emitter.emitM('loopvelocity', loopnumber, value)
 
+  @liblo.make_method('/selectedloopnum', 'isf')
+  def selectedloopnum_callback(self, path, args):
+    loopnumber, control, value = args
+    log("received '%s' message with arguments: %i, %s, %f" % (path, loopnumber, control, value))
+    self.emitter.emitM('selectedloopnum', value)
+
   @liblo.make_method(None, None)
   def fallback(self, path, args):
     a, b, c = args
-    #log("received unknown message '%s' %s:(%s) %s:(%s) %s:(%s) " % (path, a, type(a), b, type(b), c, type(c)))
+    log("received unknown message '%s' %s:(%s) %s:(%s) %s:(%s) " % (path, a, type(a), b, type(b), c, type(c)))
     self.emitter.emitM('unknown', args)
 
 try:
