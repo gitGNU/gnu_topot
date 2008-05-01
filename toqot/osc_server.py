@@ -61,7 +61,7 @@ class OscServer(liblo.ServerThread):
   @liblo.make_method('/loopstate', 'isf')
   def loopstate_callback(self, path, args):
     loopnumber, state, value = args
-    log("received '%s' message with arguments: %s, %s, %f" % (path, loopnumber, state, value))
+    #log("received '%s' message with arguments: %s, %s, %f" % (path, loopnumber, state, value))
     self.emitter.emitM('loopstate', loopnumber, value)
 
   @liblo.make_method('/loopnextstate', 'isf')
@@ -79,13 +79,13 @@ class OscServer(liblo.ServerThread):
   @liblo.make_method('/selectedloopnum', 'isf')
   def selectedloopnum_callback(self, path, args):
     loopnumber, control, value = args
-    log("received '%s' message with arguments: %i, %s, %f" % (path, loopnumber, control, value))
+    #log("received '%s' message with arguments: %i, %s, %f" % (path, loopnumber, control, value))
     self.emitter.emitM('selectedloopnum', value)
 
   @liblo.make_method(None, None)
   def fallback(self, path, args):
     a, b, c = args
-    log("received unknown message '%s' %s:(%s) %s:(%s) %s:(%s) " % (path, a, type(a), b, type(b), c, type(c)))
+    #log("received unknown message '%s' %s:(%s) %s:(%s) %s:(%s) " % (path, a, type(a), b, type(b), c, type(c)))
     self.emitter.emitM('unknown', args)
 
 try:

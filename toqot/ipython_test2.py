@@ -2,7 +2,7 @@ import math
 
 #from sooperlooper_qt import *
 #from osc_server import *
-#from myLogger import *
+from myLogger import *
 
 class MySooperLooperWidget(QObject):
   def __init__(self, parent = None):
@@ -27,6 +27,7 @@ class MySooperLooperWidget(QObject):
     self.myEmptyLoopName = []
     self.loops = []
     self.currentstate = []
+    self.selected = -1
 
   def makeLoop(self, loop):
     self.loops.append(loop)
@@ -165,10 +166,6 @@ states = ["todo",
           mySooperLooperWidget.myLoopSubstitute,
           "todo"]
 
-selected = 0
-
-#mySooperLooperWidget.currentstate[loopnumber] = mySooperLooperWidget.myLoopPlay
-
 def updateLoopNextState(loopnumber, state):
   state = int(state)
   if states[state] == "todo":
@@ -220,7 +217,7 @@ def updateLoopLen(loopnumber, looplen):
     mySooperLooperWidget.myLoopCycles[loopnumber].looplen = int(round(looplen/mySooperLooperWidget.myCycleTime[loopnumber].cyclelen)) 
     
 def updateLoopPos(loopnumber, looppos):
-  if looppos/mySooperLooperWidget.myCycleTime[loopnumber].cyclelen != 0:
+  if mySooperLooperWidget.myCycleTime[loopnumber].cyclelen != 0:
     mySooperLooperWidget.myCycleTime[loopnumber].cyclepos = (looppos - (int(looppos/mySooperLooperWidget.myCycleTime[loopnumber].cyclelen) * mySooperLooperWidget.myCycleTime[loopnumber].cyclelen))/mySooperLooperWidget.myCycleTime[loopnumber].cyclelen*360
     mySooperLooperWidget.myLoopCycles[loopnumber].currentloop = int(looppos/mySooperLooperWidget.myCycleTime[loopnumber].cyclelen)
     mySooperLooperWidget.myCycleTime[loopnumber].update()
@@ -231,19 +228,37 @@ def updateMakeLoop(loop):
   #oscserver.initOsc(loop)
 
 def updateSelectedLoopNum(loopnum):
-  global selected
-  mySooperLooperWidget.myWidgetGroup[selected].scale(.3125, .3125)
+  if mySooperLooperWidget.selected != -1:
+    mySooperLooperWidget.myWidgetGroup[mySooperLooperWidget.selected].scale(.3125, .3125)
   
-  if selected <= 3:
-    mySooperLooperWidget.myWidgetGroup[selected].setPos(0,selected*100)
-  else:
-    mySooperLooperWidget.myWidgetGroup[selected].setPos((selected-3)*100,300)
- 
-  selected = int(loopnum)
+    if mySooperLooperWidget.selected <= 3:
+      mySooperLooperWidget.myWidgetGroup[mySooperLooperWidget.selected].setPos(0, mySooperLooperWidget.selected*100)
+    else:
+      mySooperLooperWidget.myWidgetGroup[mySooperLooperWidget.selected].setPos((mySooperLooperWidget.selected-3)*100,300)
 
-  mySooperLooperWidget.myWidgetGroup[selected].scale(3.2, 3.2)
-  mySooperLooperWidget.myWidgetGroup[selected].setPos(88, -8)
+  log("%s / %s" % (str(mySooperLooperWidget.selected), str(int(loopnum))))
+  mySooperLooperWidget.selected = int(loopnum)
+  if loopnum != -1:
+    mySooperLooperWidget.myWidgetGroup[mySooperLooperWidget.selected].scale(3.2, 3.2)
+    mySooperLooperWidget.myWidgetGroup[mySooperLooperWidget.selected].setPos(88, -8)
   
+
+def updateLoopName(loopnum, name):
+  mySooperLooperWidget.myEmptyLoopName[loopnum].name = name
+  textRect = QRectF()
+  mySooperLooperWidget.myEmptyLoopName[loopnum].sizeName = len(mySooperLooperWidget.myEmptyLoopName[loopnum].name)
+
+  def resizeName():
+    mySooperLooperWidget.myEmptyLoopName[loopnum].setText(mySooperLooperWidget.myEmptyLoopName[loopnum].name[:mySooperLooperWidget.myEmptyLoopName[loopnum].sizeName])
+    textRect = mySooperLooperWidget.myEmptyLoopName[loopnum].boundingRect()
+    textRectList = textRect.getCoords()
+    if int(textRectList[2]) > 71:
+      mySooperLooperWidget.myEmptyLoopName[loopnum].sizeName -= 1
+      resizeName()
+    else:
+      return None
+
+  resizeName()
 
 oscserver.start()
 #oscserver.initOsc()
@@ -301,8 +316,8 @@ mySooperLooperWidget.myWidgetEmptyGroup[5].setPos(200,300)
 mySooperLooperWidget.myWidgetGroup[6].setPos(300,300)
 mySooperLooperWidget.myWidgetEmptyGroup[6].setPos(300,300)
 
-mySooperLooperWidget.myWidgetGroup[0].scale(3.2,3.2)
-mySooperLooperWidget.myWidgetGroup[0].setPos(88,-8)
+#mySooperLooperWidget.myWidgetGroup[0].scale(3.2,3.2)
+#mySooperLooperWidget.myWidgetGroup[0].setPos(88,-8)
 
 mySooperLooperWidget.myScene.scene.setBackgroundBrush(Qt.gray)
 mySooperLooperWidget.myScene.view.setWindowTitle("topot_sooperlooper")
@@ -310,7 +325,9 @@ mySooperLooperWidget.myScene.view.setHorizontalScrollBarPolicy(Qt.ScrollBarAlway
 mySooperLooperWidget.myScene.view.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
 mySooperLooperWidget.myScene.view.setGeometry(0,0,600,600)
+
 allTogether = mySooperLooperWidget.myScene.scene.createItemGroup([mySooperLooperWidget.myWidgetGroup[0], mySooperLooperWidget.myWidgetGroup[1], mySooperLooperWidget.myWidgetGroup[2], mySooperLooperWidget.myWidgetGroup[3], mySooperLooperWidget.myWidgetGroup[4], mySooperLooperWidget.myWidgetGroup[5], mySooperLooperWidget.myWidgetGroup[6], mySooperLooperWidget.myWidgetEmptyGroup[0], mySooperLooperWidget.myWidgetEmptyGroup[1], mySooperLooperWidget.myWidgetEmptyGroup[2], mySooperLooperWidget.myWidgetEmptyGroup[3], mySooperLooperWidget.myWidgetEmptyGroup[4], mySooperLooperWidget.myWidgetEmptyGroup[5], mySooperLooperWidget.myWidgetEmptyGroup[6]])
+
 allTogether.scale(1.5, 1.5)
 
 brush = QBrush()
