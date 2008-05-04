@@ -1,10 +1,11 @@
-TODO:
+
+'''TODO:
  * LoopVelocity could be done with outlines mask above the pie.
  * for myLoopInsert possible layout is -o- insted of o-o
  * make widgets for all states
- * make optional start position at 6 o'clock instead of 12
+ * make optional start position at 6 o'clock instead of 12'''
 
--*-----------------------------------------------------------------------
+#-*-----------------------------------------------------------------------
 ##
 ## read and print events from gamepad
 ##
@@ -44,14 +45,14 @@ def pisi(message):
 
 QObject.connect(gamepad.bridge, SIGNAL('gamepad'), pisi)
 gamepad.start()
-- - - - -
+#- - - - -
 ##
 ## from 0-1 to any range (max, min)
 ##
 
 int(round(((round(i,2)**3)*100)*((max-min)/100.)+min))
 
-- - - -
+#- - - -
 ##
 ## send midi with pyalsa
 ##
@@ -61,19 +62,17 @@ from pyalsa import alsaseq
 seq = alsaseq.Sequencer()
 seq.create_simple_port("myPort", alsaseq.SEQ_PORT_TYPE_APPLICATION, alsaseq.SEQ_PORT_CAP_SUBS_READ | alsaseq.SEQ_PORT_CAP_READ | alsaseq.SEQ_PORT_CAP_WRITE | alsaseq.SEQ_PORT_CAP_SUBS_WRITE)
 
-event = alsaseq.SeqEvent(alsaseq.SEQ_EVENT_NOTE)
-event.set_data({'note.note' : 0x40, 'note.velocity' : 64, 'note.duration' : 1, 'note.off_velocity' : 64})
-event.dest = (20, 0)
+event = alsaseq.SeqEvent(alsaseq.SEQ_EVENT_NOTEON)
+event.set_data({'note.note' : 0x40, 'note.velocity' : 64})
 
 seq.output_event(event)
 seq.drain_output()
 
-- - - - -
+#- - - - -
 from pyalsa import alsaseq
 
 seq = alsaseq.Sequencer()
-seq.create_simple_port("myPort", alsaseq.SEQ_PORT_TYPE_APPLICATION,
-alsaseq.SEQ_PORT_CAP_SUBS_READ | alsaseq.SEQ_PORT_CAP_READ)
+seq.create_simple_port("myPort", alsaseq.SEQ_PORT_TYPE_APPLICATION, alsaseq.SEQ_PORT_CAP_SUBS_READ | alsaseq.SEQ_PORT_CAP_READ)
 event = alsaseq.SeqEvent(alsaseq.SEQ_EVENT_PGMCHANGE)
 event.set_data({'control.value' : 127})
 seq.output_event(event)
@@ -82,7 +81,7 @@ event2 = alsaseq.SeqEvent(alsaseq.SEQ_EVENT_CONTROLLER)
 event2.set_data({'control.value' : 127, 'control.param' : 0x20})
 seq.output_event(event2)
 
-- - - - - -
+#- - - - - -
 ##
 ## read midi with pyalsa
 ##
@@ -100,7 +99,7 @@ event.is_control_type # True
 event.get_data()['note.velocity']
 event.get_data()['note.note']
 
-- - - - -
+#- - - - -
 ##
 ## osc send
 ##
@@ -115,7 +114,7 @@ msg.add('record')
 liblo.send(target, msg)
 liblo.send(target, msg)
 
-- - - - -
+#- - - - -
 ##
 ## convert decibel to linear slider
 ##

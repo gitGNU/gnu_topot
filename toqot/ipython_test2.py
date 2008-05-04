@@ -260,6 +260,12 @@ def updateLoopName(loopnum, name):
 
   resizeName()
 
+def midiDispatch(type, param, value):
+  if type == "cc" and param == "12":
+    value = 1 - (int(value)/127.)
+    valuef = 2.** ((math.sqrt(math.sqrt(math.sqrt(value)))*198.-198)/6.)
+    oscserver.sendLoopVelocity(0, float(valuef))
+
 oscserver.start()
 #oscserver.initOsc()
 
@@ -279,6 +285,7 @@ QObject.connect(oscserver.emitter, SIGNAL('looppos'), updateLoopPos)
 QObject.connect(oscserver.emitter, SIGNAL('loopstate'), updateLoopState)
 QObject.connect(oscserver.emitter, SIGNAL('loopnextstate'), updateLoopNextState)
 QObject.connect(oscserver.emitter, SIGNAL('selectedloopnum'), updateSelectedLoopNum)
+QObject.connect(midi.bridge, SIGNAL('MIDI'), midiDispatch)
 
 #oscserver.initOsc(0)
 #oscserver.initOsc(1)
@@ -295,7 +302,11 @@ QObject.connect(oscserver.emitter, SIGNAL('selectedloopnum'), updateSelectedLoop
 ## 4x4 grid layout with one big at top right which goes from (1,0) to (2,3)
 _ip.magic("run -i sooperlooper_qt.py")
 _ip.magic("run -i osc_server.py")
+_ip.magic("run -i midi_dispatcher.py")
 _ip.magic("run -i ipython_test2.py")
+
+midi.start()
+
 oscserver.initOsc(0)
 oscserver.initOsc(1)
 oscserver.initOsc(2)
