@@ -34,8 +34,12 @@ class OscServer(liblo.ServerThread):
     liblo.send(self.target, '/sl/%s/register_auto_update' % loop, 'loop_len', 100, 'osc.udp://localhost:%s' % OSC_SERVER_PORT, '/looplen')
     liblo.send(self.target, '/register_auto_update', 'selected_loop_num', 100, 'osc.udp://localhost:%s' % OSC_SERVER_PORT, '/selectedloopnum')
 
+  def sendSelectedLoopNum(self, loopnum):
+    liblo.send(self.target, '/set', 'selected_loop_num', float(loopnum))
+    log("sent: /set/selected_loop_num %s" % str(loopnum))
+
   def sendHit(self, loopnum, command):
-    #liblo.send(self.target, '/sl/%s/hit' % str(loopnum), command)
+    liblo.send(self.target, '/sl/%s/hit' % str(loopnum), command)
     log("sent: /sl/%s/hit %s" % (str(loopnum), command))
 
   def sendLoopVelocity(self, loopnum, value):

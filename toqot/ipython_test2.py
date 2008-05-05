@@ -260,11 +260,28 @@ def updateLoopName(loopnum, name):
 
   resizeName()
 
-def midiDispatch(type, param, value):
-  if type == "cc" and param == "12":
-    value = 1 - (int(value)/127.)
-    valuef = 2.** ((math.sqrt(math.sqrt(math.sqrt(value)))*198.-198)/6.)
-    oscserver.sendLoopVelocity(0, float(valuef))
+slwets = [['cc', '12', 0], ['cc', '13', 1], ['cc', '14', 2], ['cc', '15', 3], ['cc', '16', 4], ['cc', '17', 5], ['cc', '18', 6], ['axis', '3', -3, '0-1']]
+
+slloopnums = [['cc', '30', 0], ['cc', '31', 1], ['cc', '69', 2], ['pc', '4', 3], ['pc', '5', 4], ['pc', '6', 5], ['pc', '7', 6], ['button', '4', 0], ['button', '1', 1], ['button', '3', 2], ['button', '2', 3]] 
+
+slstates = [['cc', '1', 'record'], ['cc', '67', 'overdub'], ['cc', '68', 'substitute'], ['cc', '66', 'multiply']]
+
+def slDispatch(type, param, value):
+  for slwet in slwets:
+    if slwet[0] == type and slwet[1] == param:
+      if len(slwet) >= 3:
+        # if slwet[3] == 'cont': gamepad.bridge.emitMessage(
+        oscserver.sendLoopVelocity(slwet[2], float(value))
+      else:
+        value = 1 - (int(value)/127.)
+        valuef = 2.** ((math.sqrt(math.sqrt(math.sqrt(value)))*198.-198)/6.)
+        oscserver.sendLoopVelocity(slwet[2], float(valuef))
+  for slloopnum in slloopnums:
+    if slloopnum[0] == type and slloopnum[1] == param:
+      oscserver.sendSelectedLoopNum(slloopnum[2])
+  for slstate in slstates:
+    if slstate[0] == type and slstate[1] == param:
+      oscserver.sendHit(-3, slstate[2])
 
 oscserver.start()
 #oscserver.initOsc()
@@ -285,7 +302,8 @@ QObject.connect(oscserver.emitter, SIGNAL('looppos'), updateLoopPos)
 QObject.connect(oscserver.emitter, SIGNAL('loopstate'), updateLoopState)
 QObject.connect(oscserver.emitter, SIGNAL('loopnextstate'), updateLoopNextState)
 QObject.connect(oscserver.emitter, SIGNAL('selectedloopnum'), updateSelectedLoopNum)
-QObject.connect(midi.bridge, SIGNAL('MIDI'), midiDispatch)
+QObject.connect(midi.bridge, SIGNAL('MIDI'), slDispatch)
+QObject.connect(gamepad.bridge, SIGNAL('gamepad'), slDispatch)
 
 #oscserver.initOsc(0)
 #oscserver.initOsc(1)
@@ -303,9 +321,11 @@ QObject.connect(midi.bridge, SIGNAL('MIDI'), midiDispatch)
 _ip.magic("run -i sooperlooper_qt.py")
 _ip.magic("run -i osc_server.py")
 _ip.magic("run -i midi_dispatcher.py")
+_ip.magic("run -i gamepad_dispatcher.py")
 _ip.magic("run -i ipython_test2.py")
 
 midi.start()
+gamepad.start()
 
 oscserver.initOsc(0)
 oscserver.initOsc(1)

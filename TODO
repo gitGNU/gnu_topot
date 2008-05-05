@@ -1,3 +1,4 @@
+* to change lists (ie. slwets, slloopnums...) with nicer and more elegant configurations...
 * to make version where there is a master CycleTime so it is separated from loops
   * to make CycleTime ring for loop just in case it's cycle is different from master one
 * to clean up git repository
@@ -13,3 +14,10 @@ TODO for old marijn's aproach:
   source
 * start use pyliblo instead simpleosc as liblo is standard for osc these
   days
+
+- - - -
+* refactored midiDispatch to slDispatch as gamepad could use it the same way midi does
+* added dispatching sooperlooper wet command in ipython_test2.py as list slwets through midiDispatch function 
+* added sendSelectedLoopNum to osc_server.py 
+* added dispatching sooperlooper selected_loop_num in ipython_test2.py as list slloopnums through midiDispatch function 
+* added dispatching sooperlooper /set command (ie. record, substitute...) in ipython_test2.py as list slstates through midiDispatch function

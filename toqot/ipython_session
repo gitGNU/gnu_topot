@@ -124,3 +124,23 @@ def gain2position(gain):
 
 def position2gain(pos):
   print 2.** ((math.sqrt(math.sqrt(math.sqrt(pos)))*198.-198)/6.)
+
+#- - - - -
+##
+## continous controller
+##
+
+uf... treba mi factory pattern...
+
+listContContr = []
+tajmer = QTimer()
+listContContr.append(tajmer)
+listContContr[0] = ['control', 'param', 'value']
+
+class ContinousController(QObject):
+  def __init__(self, parent = None):
+    super(ContinousController, self).__init__(parent)
+    self.control = control
+    self.param = 
+    
+ 
