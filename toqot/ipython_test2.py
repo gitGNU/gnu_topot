@@ -211,15 +211,18 @@ def updateVelocity(loopnumber, velocity):
 
 def updateCycleLen(loopnumber, cyclelen):
   mySooperLooperWidget.myCycleTime[loopnumber].cyclelen = cyclelen
+  #mySooperLooperWidget.myCycleTime[loopnumber].cyclelen = mySooperLooperWidget.myCycleTime[0].cyclelen
 
 def updateLoopLen(loopnumber, looplen):
   if mySooperLooperWidget.myCycleTime[loopnumber].cyclelen != 0:
-    mySooperLooperWidget.myLoopCycles[loopnumber].looplen = int(round(looplen/mySooperLooperWidget.myCycleTime[loopnumber].cyclelen)) 
+    #mySooperLooperWidget.myLoopCycles[loopnumber].looplen = int(round(looplen/mySooperLooperWidget.myCycleTime[loopnumber].cyclelen)) 
+    mySooperLooperWidget.myLoopCycles[loopnumber].looplen = int(round(looplen/mySooperLooperWidget.myCycleTime[0].cyclelen)) 
     
 def updateLoopPos(loopnumber, looppos):
   if mySooperLooperWidget.myCycleTime[loopnumber].cyclelen != 0:
     mySooperLooperWidget.myCycleTime[loopnumber].cyclepos = (looppos - (int(looppos/mySooperLooperWidget.myCycleTime[loopnumber].cyclelen) * mySooperLooperWidget.myCycleTime[loopnumber].cyclelen))/mySooperLooperWidget.myCycleTime[loopnumber].cyclelen*360
-    mySooperLooperWidget.myLoopCycles[loopnumber].currentloop = int(looppos/mySooperLooperWidget.myCycleTime[loopnumber].cyclelen)
+    #mySooperLooperWidget.myLoopCycles[loopnumber].currentloop = int(looppos/mySooperLooperWidget.myCycleTime[loopnumber].cyclelen)
+    mySooperLooperWidget.myLoopCycles[loopnumber].currentloop = int(looppos/mySooperLooperWidget.myCycleTime[0].cyclelen)
     mySooperLooperWidget.myCycleTime[loopnumber].update()
     mySooperLooperWidget.myLoopCycles[loopnumber].update()
 
@@ -260,18 +263,38 @@ def updateLoopName(loopnum, name):
 
   resizeName()
 
-slwets = [['cc', '12', 0], ['cc', '13', 1], ['cc', '14', 2], ['cc', '15', 3], ['cc', '16', 4], ['cc', '17', 5], ['cc', '18', 6], ['axis', '3', -3, '0-1']]
+slwets = [['cc', '12', 0], ['cc', '13', 1], ['cc', '14', 2], ['cc', '15', 3], ['cc', '16', 4], ['cc', '17', 5], ['cc', '18', 6], ['axis', '3', -3, 'cont']]
 
-slloopnums = [['cc', '30', 0], ['cc', '31', 1], ['cc', '69', 2], ['pc', '4', 3], ['pc', '5', 4], ['pc', '6', 5], ['pc', '7', 6], ['button', '4', 0], ['button', '1', 1], ['button', '3', 2], ['button', '2', 3]] 
+slloopnums = [['cc', '30', 0], ['cc', '31', 1], ['cc', '69', 2], ['pc', '4', 3], ['pc', '5', 4], ['pc', '6', 5], ['pc', '7', 6], ['button', '3', 0], ['button', '0', 1], ['button', '2', 2], ['button', '1', 3]] 
 
-slstates = [['cc', '1', 'record'], ['cc', '67', 'overdub'], ['cc', '68', 'substitute'], ['cc', '66', 'multiply']]
+slstates = []
+
+#slstates = [['cc', '1', 'record'], ['cc', '67', 'overdub'], ['cc', '68', 'substitute'], ['cc', '66', 'multiply'], ['button', '4', 'record'], ['button', '5', 'overdub'], ['button', '6', 'substitute'], ['button', '7', 'multiply']]
+
+tajmers = {}
 
 def slDispatch(type, param, value):
   for slwet in slwets:
     if slwet[0] == type and slwet[1] == param:
       if len(slwet) >= 3:
-        # if slwet[3] == 'cont': gamepad.bridge.emitMessage(
-        oscserver.sendLoopVelocity(slwet[2], float(value))
+        if slwet[3] == 'cont':
+          def sendCont():
+            velocity = mySooperLooperWidget.myLoopVelocity[mySooperLooperWidget.selected].velocity /32. 
+            velocityfl = 2.** ((math.sqrt(math.sqrt(math.sqrt(velocity)))*198.-198)/6.)
+            velocityfin = velocityfl + ((((float(value)*100)**3)/20000)/500 * -1)
+            if velocityfin >= 1.:
+              velocityfin = 1.
+            oscserver.sendLoopVelocity(slwet[2], velocityfin)
+
+          if tajmers.has_key(str(type)+str(param)):
+            tajmers[str(type)+str(param)].stop()
+            QObject.disconnect(tajmers[str(type)+str(param)], SIGNAL("timeout()"), sendCont)
+            del(tajmers[str(type)+str(param)])
+  
+          if value != '0' and value != '0.0':
+            tajmers[str(type)+str(param)] = QTimer()
+            QObject.connect(tajmers[str(type)+str(param)], SIGNAL("timeout()"), sendCont)
+            tajmers[str(type)+str(param)].start(100)
       else:
         value = 1 - (int(value)/127.)
         valuef = 2.** ((math.sqrt(math.sqrt(math.sqrt(value)))*198.-198)/6.)
@@ -366,6 +389,8 @@ brush.setColor(Qt.darkCyan)
 brush.setStyle(Qt.Dense4Pattern)
 mySooperLooperWidget.myScene.scene.setBackgroundBrush(brush)
 allTogether.setPos(70,150)
+
+slstates = [['cc', '1', 'record'], ['cc', '67', 'overdub'], ['cc', '68', 'substitute'], ['cc', '66', 'multiply'], ['button', '4', 'record'], ['button', '5', 'overdub'], ['button', '6', 'substitute'], ['button', '7', 'multiply']]
 
 mySooperLooperWidget.myWidgetGroup[0].scale(.3125, .3125)
 mySooperLooperWidget.myWidgetGroup[0].setPos(0,100)
