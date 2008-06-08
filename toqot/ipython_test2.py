@@ -294,7 +294,7 @@ def slDispatch(type, param, value):
           if value != '0' and value != '0.0':
             tajmers[str(type)+str(param)] = QTimer()
             QObject.connect(tajmers[str(type)+str(param)], SIGNAL("timeout()"), sendCont)
-            tajmers[str(type)+str(param)].start(100)
+            tajmers[str(type)+str(param)].start(50)
       else:
         value = 1 - (int(value)/127.)
         valuef = 2.** ((math.sqrt(math.sqrt(math.sqrt(value)))*198.-198)/6.)
@@ -303,7 +303,9 @@ def slDispatch(type, param, value):
     if slloopnum[0] == type and slloopnum[1] == param:
       oscserver.sendSelectedLoopNum(slloopnum[2])
   for slstate in slstates:
-    if slstate[0] == type and slstate[1] == param:
+    # and value == '1' is just temporary solution for gamepad buttons
+    # two states where sooperlooper needs just one
+    if slstate[0] == type and slstate[1] == param and value == '1':
       oscserver.sendHit(-3, slstate[2])
 
 oscserver.start()

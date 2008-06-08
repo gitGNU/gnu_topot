@@ -1,8 +1,10 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+from PyQt4 import QtOpenGL
 import sys
 
-class MainForm(QDialog):
+#class MainForm(QDialog):
+class MainForm(QtOpenGL.QGLWidget):
   def __init__(self, parent=None):
     super(MainForm, self).__init__(parent)
 
