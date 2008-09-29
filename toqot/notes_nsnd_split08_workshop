@@ -1,0 +1,236 @@
+ * ipython -> PyQt4 Hello, world 
+
+import sys
+from PyQt4.QtCore import *
+from PyQt4.QtGui import *
+
+app = QApplication(sys.argv)
+label = QLabel("Hello world!")
+label.show()
+label.hide()
+ 
+ 
+ * change color in Hello, world through ipython
+
+label.setText("Hello universe!")
+label.show()
+label.setText("<font style='color: red;background: black;'>Hello universe!</font>")
+label.setMinimumWidth(200)
+label.setMinimumHeight(50)
+label.setAlignment(Qt.AlignCenter)
+label.setAlignment(Qt.AlignBottom|Qt.AlignHCenter)
+label.setAlignment(Qt.AlignTop|Qt.AlignHCenter)
+label.setAlignment(Qt.AlignTop|Qt.AlignRight)
+
+
+ * autocompletion in ipython
+
+TAB
+
+ * two QLabels/QLayout: one with Hello, world, the other with ipython terminal
+
+mainwindow = QWidget()
+container = QX11EmbedContainer()
+vlayout = QVBoxLayout()
+vlayout.addWidget(label)
+vlayout.addWidget(container)
+mainwindow.setLayout(vlayout)
+mainwindow.show()
+mainwindow.setMinimumHeight(480)
+mainwindow.setMinimumWidth(480)
+label.setAlignment(Qt.AlignBottom|Qt.AlignHCenter)
+label.setMinimumHeight(240)
+!xprop
+>>> window id # of group leader: 0xa00006
+container.embedClient(0xa00006)
+label.setAlignment(Qt.AlignTop|Qt.AlignHCenter)
+vlayout.setContentsMargins(0,0,0,0)
+vlayout.setSpacing(0)
+container.discardClient()
+
+ * Main window, menu bar, toolbar, status bar, dock widgets & central widget
+
+_ip.magic("run sooperlooper_qt.py")
+myCycleTime = CycleTime()
+myCycleTime.setZValue(0)
+myScene.scene.addItem(myCycleTime)
+
+myLoopCycles = LoopCycles()
+myLoopCycles.setPos(15, 15)
+myLoopCycles.setZValue(1)
+myScene.scene.addItem(myLoopCycles)
+
+myLoopVelocity = LoopVelocity()
+myLoopVelocity.setPos(24, 24)
+myLoopVelocity.setZValue(2)
+myScene.scene.addItem(myLoopVelocity)
+
+myLoopPlay = LoopPlay()
+myLoopPlay.setPos(30, 30)
+myLoopPlay.setZValue(3)
+myScene.scene.addItem(myLoopPlay)
+itemsGroup = myScene.scene.createItemGroup([myCycleTime, myLoopCycles, myLoopVelocity, myLoopPlay])
+itemsGroup.setFlag(QGraphicsItem.ItemIsMovable)
+mw = QMainWindow()
+cw = QWidget()
+vlayout = QVBoxLayout()
+vlayout.addWidget(myScene.view)
+container = QX11EmbedContainer()
+container.setGeometry(4,4,600,425)
+container.show()
+wid = container.winId()
+parametersList = ["-into", repr(wid), "-bg", "black", "-fg", "white"]
+process = QProcess()
+process.start("xterm", parametersList)
+#container.embedClient(0x2800006)
+
+vlayout.addWidget(container)
+cw.setLayout(vlayout)
+cw.show()
+!xprop
+container.embedClient(0x800006)
+mw.show()
+mw.setCentralWidget(cw)
+from PyQt4.QtWebKit import *
+wk = QWebView()
+dock = QDockWidget("WebKit Documentation")
+dock.setObjectName("WebKitDocumentation")
+dock.setAllowedAreas(Qt.RightDockWidgetArea)
+dock.setWidget(wk)
+mw.addDockWidget(Qt.RightDockWidgetArea, dock)
+statuslabel = QLabel()
+statuslabel.setFrameStyle(QFrame.StyledPanel|QFrame.Sunken)
+status = mw.statusBar()
+status.setSizeGripEnabled(False)
+status.addPermanentWidget(statuslabel)
+status.showMessage("tekst u prvom redu")
+wk.setUrl(QUrl("file:///usr/share/doc/PyQt4/doc/html/qwebview.html"))
+mw.menuBar().addMenu("Foo")
+
+
+* bottom dock: ipython/vim in screen
+ * left dock: QWebView: PyQt4 documentation
+todo:
+type(label)
+>>> <class 'PyQt4.QtGui.QLabel'>
+"PyQt4" in str(type(label))
+>>> True
+label.__class__.__name__.lower()
+
+type(QLabel)
+>>> <type 'sip.wrappertype'>
+"sip.wrappertype" in str(type(QLabel))
+>>> True
+QLabel.__name__.lower()
+
+def qt(klas):
+    wk.setUrl(QUrl("file:///usr/share/doc/PyQt4/doc/html/%s.html" % klas.__name__.lower()))
+
+
+* central widget: custom widget (from topot)
+
+
+
+* signal/slot
+ * osc signal/slot in custom widget
+ * onKeyPress change custom widget
+ * make file pipes on change pipe change custom widget
+
+
+
+* the new experiment:
+
+_ip.magic("run sooperlooper_qt.py")
+mw = QMainWindow()
+myScene = MainForm()
+myCycleTime = CycleTime()
+myCycleTime.setZValue(0)
+myScene.scene.addItem(myCycleTime)
+
+myLoopCycles = LoopCycles()
+myLoopCycles.setPos(15, 15)
+myLoopCycles.setZValue(1)
+myScene.scene.addItem(myLoopCycles)
+
+myLoopVelocity = LoopVelocity()
+myLoopVelocity.setPos(24, 24)
+myLoopVelocity.setZValue(2)
+myScene.scene.addItem(myLoopVelocity)
+
+myLoopPlay = LoopPlay()
+myLoopPlay.setPos(30, 30)
+myLoopPlay.setZValue(3)
+myScene.scene.addItem(myLoopPlay)
+itemsGroup = myScene.scene.createItemGroup([myCycleTime, myLoopCycles, myLoopVelocity, myLoopPlay])
+itemsGroup.setFlag(QGraphicsItem.ItemIsMovable)
+cw = QWidget()
+vlayout = QVBoxLayout()
+
+mw.setCentralWidget(cw)
+cw.setLayout(vlayout)
+vlayout.addWidget(myScene.view)
+container = QX11EmbedContainer()
+vlayout.addWidget(container)
+_ip.system("xprop")
+container.embedClient(0x2400006);mw.show()
+print In[0:35]
+print In[20:35]
+from PyQt4.QtWebKit import *
+wk = QWebView()
+dock = QDockWidget("WebKit Documentation")
+dock.setObjectName("WebKitDocumentation")
+dock.setAllowedAreas(Qt.RightDockWidgetArea)
+dock.setWidget(wk)
+mw.addDockWidget(Qt.RightDockWidgetArea, dock)
+statuslabel = QLabel()
+statuslabel.setFrameStyle(QFrame.StyledPanel|QFrame.Sunken)
+status = mw.statusBar()
+status.setSizeGripEnabled(False)
+status.addPermanentWidget(statuslabel)
+status.showMessage("tekst u prvom redu")
+wk.setUrl(QUrl("file:///usr/share/doc/PyQt4/doc/html/qwebview.html"))
+mw.menuBar().addMenu("Foo")
+itemsGroup.scale(2,2)
+def qt(klas):
+    wk.setUrl(QUrl("file:///usr/share/doc/PyQt4/doc/html/%s.html" % klas.__name__.lower()))
+
+### dock attempt
+
+import sys
+from PyQt4.QtCore import *
+from PyQt4.QtGui import *
+
+app = QApplication(sys.argv)
+mw = QMainWindow()
+mw.setCentralWidget(QLabel("Hello world!"))
+container = QX11EmbedContainer()
+dock = QDockWidget("IPython session")
+dock.setObjectName("IPython_session")
+dock.setAllowedAreas(Qt.BottomDockWidgetArea)
+dock.setWidget(container)
+mw.addDockWidget(Qt.BottomDockWidgetArea, dock)
+mw.show()
+wid = container.winId()
+parametersList = ["-into", repr(wid), "-bg", "black", "-fg", "white"]
+process = QProcess()
+process.start("xterm", parametersList)
+
+### splitter example
+
+import sys
+from PyQt4.QtCore import *
+from PyQt4.QtGui import *
+app = QApplication(sys.argv)
+mw = QMainWindow()
+splitter = QSplitter()
+splitter.setOrientation(Qt.Vertical)
+mw.setCentralWidget(splitter)
+container = QX11EmbedContainer()
+label = QLabel("Hello world!")
+splitter.addWidget(label)
+splitter.addWidget(container)
+wid = container.winId()
+parametersList = ["-embed", repr(wid), "-bg", "black", "-fg", "white"]
+process = QProcess()
+process.start("urxvt", parametersList)
+mw.show()
